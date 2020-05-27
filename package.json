@@ -1,7 +1,7 @@
 {
   "name": "vue-editable-grid",
   "description": "Simple Vue grid with edit mode and cell navigation such as excel",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": false,
   "keywords": [
     "vue",
@@ -16,9 +16,9 @@
   "main": "./dist/VueEditableGrid.common.js",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --target lib --name VueEditableGrid ./src/components/VueEditableGrid.vue",
     "lint": "vue-cli-service lint",
-    "build-bundle": "vue-cli-service build --target lib --name VueEditableGrid ./src/components/VueEditableGrid.vue"
+    "publish": "npm run build && npm publish --access public"
   },
   "files": [
     "dist/*",
