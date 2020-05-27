@@ -40,23 +40,23 @@ export default {
     cellEditing: { type: Array },
     cellsWithErrors: { type: Object }
   },
-  data() {
+  data () {
     return { value: null, editPending: false }
   },
   computed: {
-    selected() {
+    selected () {
       return this.rowIndex >= this.selStart[0] && this.rowIndex <= this.selEnd[0] && this.columnIndex >= this.selStart[1] && this.columnIndex <= this.selEnd[1]
     },
-    editable() {
+    editable () {
       return this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex
     },
-    invalid() {
+    invalid () {
       return this.cellsWithErrors[`cell${this.rowIndex}-${this.columnIndex}`]
     }
   },
   watch: {
-    cellEditing() {
-      if (this.cellEditing[0] == this.rowIndex && this.cellEditing[1] == this.columnIndex) {
+    cellEditing () {
+      if (this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex) {
         this.value = this.cellEditing[3] ? null : this.row[this.column.field]
         Vue.nextTick(() => {
           document.querySelector(`#cell${this.rowIndex}-${this.columnIndex} input`).focus()
@@ -65,15 +65,15 @@ export default {
     }
   },
   methods: {
-    setEditableValue($event) {
+    setEditableValue ($event) {
       const { row, column, rowIndex, columnIndex, value } = this
       this.editPending = false
       this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value })
     },
-    editCancelled() {
+    editCancelled () {
       this.$emit('edit-cancelled')
     },
-    leaved($event) {
+    leaved ($event) {
       if (this.editPending) {
         this.setEditableValue($event)
       }
@@ -122,7 +122,7 @@ export default {
       font-size: 20px;
     }
   }
-  
+
   .editable-field {
     height: 100%;
     width: 100%;

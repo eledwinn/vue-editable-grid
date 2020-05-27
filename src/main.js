@@ -1,9 +1,9 @@
-import Vue from 'vue';
-import Dev from './serve.vue';
+import Vue from 'vue'
+import App from './App.vue'
 import VueCurrencyFilter from 'vue-currency-filter'
-import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format';
+import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format'
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
 Vue.use(VueFilterDateFormat)
 Vue.use(VueCurrencyFilter, {
@@ -16,5 +16,5 @@ Vue.use(VueCurrencyFilter, {
 })
 
 new Vue({
-  render: (h) => h(Dev),
-}).$mount('#app');
+  render: h => h(App)
+}).$mount('#app')

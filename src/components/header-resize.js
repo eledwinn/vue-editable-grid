@@ -11,8 +11,8 @@ export const initResize = (header, $event, onChanges, onFinish) => {
   onFinishCallback = onFinish
   tableHead = header.parentNode.parentNode
   tableHead.classList.add('resizing')
-  window.addEventListener('mousemove', onMouseMove);
-  window.addEventListener('mouseup', onMouseUp);
+  window.addEventListener('mousemove', onMouseMove)
+  window.addEventListener('mouseup', onMouseUp)
 }
 
 const onMouseMove = e => {
@@ -23,8 +23,8 @@ const onMouseMove = e => {
 }
 
 const onMouseUp = () => {
-  window.removeEventListener('mousemove', onMouseMove);
-  window.removeEventListener('mouseup', onMouseUp);
+  window.removeEventListener('mousemove', onMouseMove)
+  window.removeEventListener('mouseup', onMouseUp)
   tableHead.classList.remove('resizing')
   onFinishCallback()
 }

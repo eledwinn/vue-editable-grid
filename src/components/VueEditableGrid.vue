@@ -57,9 +57,8 @@ div.grid-container
 import { filterAndSort, checkFocus } from './helpers'
 import { initResize } from './header-resize'
 import Paginate from './Paginate.vue'
-import Cell from './Cell.vue'
-import Filters from './Filters.vue'
-
+import Cell from './Cell'
+import Filters from './Filters'
 
 const isWriteableKey = code =>
   (code >= 48 && code <= 57) || // 0 - 9
@@ -68,9 +67,8 @@ const isWriteableKey = code =>
   (code >= 188 && code <= 191) //
 
 let changePending = false
-  
+
 export default {
-  name: 'VueEditableGrid',
   components: { Paginate, Cell, Filters },
   props: {
     columnDefs: { type: Array },
@@ -80,7 +78,7 @@ export default {
     itemHeight: { type: Number, default: 30 },
     virtualScrollOffset: { type: Number, default: 3 }
   },
-  data() {
+  data () {
     return {
       selStart: [],
       selEnd: [],
@@ -98,7 +96,7 @@ export default {
       visibleRows: []
     }
   },
-  created() {
+  created () {
     document.addEventListener('keydown', $event => {
       if (!this.focused || this.cellEditing.length) {
         return
@@ -128,7 +126,7 @@ export default {
         this.tryEdit(rowData, colData, rowIndex, colIndex)
       } else if (key === 'v' && $event.metaKey) {
         this.$refs.tmp.value = ''
-        this.$refs.tmp.focus();
+        this.$refs.tmp.focus()
         setTimeout(() => {
           const pasted = this.$refs.tmp.value
           const arrayPasted = pasted.split('\n').map(row => row.split('\t'))
@@ -152,20 +150,19 @@ export default {
             this.selEnd = [rowIndex, columnIndex]
           }
         }, 100)
-
       } else if ($event.metaKey && (key === 'c' || key === 'x')) {
         const { colData, rowData } = this.getCell()
         const value = rowData[colData.field]
         this.$refs.tmp.value = value || ''
-        this.$refs.tmp.select();
-        document.execCommand('copy');
+        this.$refs.tmp.select()
+        document.execCommand('copy')
       } else if (!$event.metaKey && this.selStart[0] >= 0 && isWriteableKey($event.keyCode)) {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
         this.tryEdit(rowData, colData, rowIndex, colIndex, true)
       }
     })
   },
-  mounted() {
+  mounted () {
     checkFocus(this.$refs.container.querySelector('tbody'), focused => {
       this.focused = focused
     })
@@ -185,31 +182,31 @@ export default {
     this.renderVisibleScroll(body)
   },
   watch: {
-    selStart(value, old) {
+    selStart (value, old) {
       if (value[0] !== old[0]) {
         this.$emit('row-selected', this.getCell())
       }
     }
   },
   computed: {
-    rowDataFiltered() {
+    rowDataFiltered () {
       return filterAndSort(this.filter, this.rowData, this.sortByColumn, this.sortByDesc)
     },
-    rowDataPage() {
+    rowDataPage () {
       if (!this.pageCount) {
         return this.rowDataFiltered
       }
       return this.rowDataFiltered.slice(this.page * this.pageCount, this.page * this.pageCount + this.pageCount)
     },
-    columnDefsFiltered() {
+    columnDefsFiltered () {
       return this.columnDefs
     },
-    pages() {
+    pages () {
       return Math.ceil(this.rowDataFiltered.length / this.pageCount)
     }
   },
   methods: {
-    renderVisibleScroll(body) {
+    renderVisibleScroll (body) {
       if (!body) {
         body = this.$refs.body
       }
@@ -224,17 +221,17 @@ export default {
       this.offsetRows = offset
       this.visibleRows = this.rowDataPage.slice(offset, offset + visibleCount)
     },
-    filtersChanged() {
+    filtersChanged () {
       this.page = 0
       this.renderVisibleScroll()
     },
-    getCell() {
+    getCell () {
       const [rowIndex, colIndex] = this.selStart
       const colData = this.columnDefs[this.selStart[1]]
       const rowData = this.rowDataFiltered[this.selStart[0]]
       return { rowData, colData, rowIndex, colIndex }
     },
-    async selectCell(rowIndex, colIndex, $event) {
+    async selectCell (rowIndex, colIndex, $event) {
       if (changePending) {
         return
       }
@@ -260,7 +257,7 @@ export default {
       }
       this.focus()
     },
-    focus() {
+    focus () {
       const [rowIndex, colIndex] = this.selStart
       const body = this.$refs.body
       const cell = body.querySelector(`#cell${rowIndex}-${colIndex}`)
@@ -287,21 +284,21 @@ export default {
         // body.scrollTop += rowIndex * this.itemHeight; // this.visibleRows (this.itemHeight * 2)
       }
     },
-    tryEdit(row, column, rowIndex, columnIndex, reset) {
+    tryEdit (row, column, rowIndex, columnIndex, reset) {
       if (column.editable) {
         this.cellEditing = [rowIndex, columnIndex, reset]
       }
     },
-    cellEdited({ row, column, rowIndex, columnIndex, value, $event }) {
+    cellEdited ({ row, column, rowIndex, columnIndex, value, $event }) {
       this.setEditableValue(row, column, rowIndex, columnIndex, value, $event)
     },
-    setEditableValue(row, column, rowIndex, columnIndex, value, $event) {
+    setEditableValue (row, column, rowIndex, columnIndex, value, $event) {
       return new Promise(resolve => {
         const cellId = `cell${rowIndex}-${columnIndex}`
         const input = document.querySelector(`#${cellId} input`)
         const eventCode = $event && $event.code
         let prevent = false
-        
+
         const preventDefault = () => {
           prevent = true
           if (changePending) {
@@ -350,7 +347,7 @@ export default {
         }
       })
     },
-    sort(column) {
+    sort (column) {
       if (column.sortable) {
         if (this.sortByColumn === column.field) {
           this.sortByDesc = !this.sortByDesc
@@ -359,30 +356,30 @@ export default {
         this.renderVisibleScroll()
       }
     },
-    setGridColumnTemplate() {
+    setGridColumnTemplate () {
       this.gridTemplateColumns = this.columnDefsFiltered
-        .map(({ size }) => size || `minmax(130px, 1.67fr)`)
-        .join(' ');
+        .map(({ size }) => size || 'minmax(130px, 1.67fr)')
+        .join(' ')
     },
-    initResize(column, $event) {
+    initResize (column, $event) {
       initResize($event.target.parentNode, $event, width => {
-        column.size = Math.max(30, width) + 'px';
+        column.size = Math.max(30, width) + 'px'
         this.setGridColumnTemplate()
       }, () => {
         localStorage.setItem('columns', JSON.stringify(this.columnDefsFiltered.map(({ field, size }) => ({ field, size }))))
       })
     },
-    sumSelectionCol(sum) {
+    sumSelectionCol (sum) {
       let [row, col] = this.selStart
       col += sum
       this.selectCell(row, col)
     },
-    sumSelectionRow(sum) {
+    sumSelectionRow (sum) {
       let [row, col] = this.selStart
       row += sum
       this.selectCell(row, col)
     },
-    removeFilter(field) {
+    removeFilter (field) {
       if (field) {
         this.$delete(this.filter, field)
       } else {
@@ -398,7 +395,6 @@ export default {
 @import './variables';
 // .grid-container {}
 $tools-height: 25px;
-
 
 .scroller {
   height: 100%;

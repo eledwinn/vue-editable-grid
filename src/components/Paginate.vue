@@ -22,19 +22,19 @@ export default {
     pageCount: { type: Number, required: true },
     totalRows: { type: Number, required: true }
   },
-  data() {
+  data () {
     return { count: this.pageCount }
   },
   watch: {
-    count() {
+    count () {
       this.$emit('count-changed', this.count)
     }
   },
   methods: {
-    prev() {
+    prev () {
       this.$emit('prev')
     },
-    next() {
+    next () {
       this.$emit('next')
     }
   }

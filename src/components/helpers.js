@@ -19,31 +19,31 @@ export const filterAndSort = (filter, data, sortBy, sortDesc) => {
     const valA = a[sortBy]
     const valB = b[sortBy]
     if (valA > valB) {
-      return sortDesc ? -1 : 1;
+      return sortDesc ? -1 : 1
     }
     if (valA < valB) {
-      return sortDesc ? 1 : -1;
+      return sortDesc ? 1 : -1
     }
-    return 0;
+    return 0
   })
 }
 
-export const checkFocus = (element, callback) => {
+export const checkFocus = (element, func) => {
   let isFocused = null
   document.addEventListener('click', event => {
-    let targetElement = event.target;
+    let targetElement = event.target
     do {
       if (targetElement === element) {
         if (isFocused !== true) {
-          callback(true)
+          func(true)
           isFocused = true
         }
-        return;
+        return
       }
-      targetElement = targetElement.parentNode;
-    } while (targetElement);
+      targetElement = targetElement.parentNode
+    } while (targetElement)
     if (isFocused !== false) {
-      callback(false)
+      func(false)
       isFocused = false
     }
   })

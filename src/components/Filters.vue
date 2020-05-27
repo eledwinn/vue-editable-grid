@@ -11,21 +11,21 @@ export default {
     columnDefs: { type: Array }
   },
   computed: {
-    colNames() {
+    colNames () {
       return this.columnDefs.reduce((memo, column) => {
         memo[column.field] = column.headerName
         return memo
       }, {})
     },
-    filtersLength() {
+    filtersLength () {
       return this.fieldsWithData.length
     },
-    fieldsWithData() {
+    fieldsWithData () {
       return Object.keys(this.filters).filter(field => this.filters[field])
     }
   },
   methods: {
-    remove(field) {
+    remove (field) {
       this.$emit('remove', field)
     }
   }

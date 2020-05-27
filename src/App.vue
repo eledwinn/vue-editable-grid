@@ -1,6 +1,17 @@
+<template>
+  <div id="app">
+    <vue-editable-grid
+      class="grid"
+      :column-defs="columnDefs"
+      :row-data="rows"
+      :pageCount='0'
+      :displays="gridDisplays"
+    ></vue-editable-grid>
+  </div>
+</template>
+
 <script>
-import Vue from 'vue';
-import VueEditableGrid from '@/vue-editable-grid.vue';
+import VueEditableGrid from './components/VueEditableGrid.vue'
 
 import data from './data'
 
@@ -14,12 +25,12 @@ const columnDefinition = [
   { sortable: true, filter: true, field: 'oriCityCode', headerName: 'Origin City' },
   { sortable: true, filter: true, field: 'desCityCode', headerName: 'Dest City' },
   { sortable: true, filter: true, field: 'priceRate', headerName: 'Price Rate', type: 'currency' },
-  { sortable: true, filter: true, field: 'weightLoad', headerName: 'Weight' }, 
+  { sortable: true, filter: true, field: 'weightLoad', headerName: 'Weight' },
   { sortable: true, filter: true, field: 'purchaseOrder', headerName: 'PO', editable: true },
   { sortable: true, filter: true, field: 'carrierName', headerName: 'Carrier name' },
   { sortable: true, filter: true, field: 'comment1', headerName: 'Comment 1' },
   { sortable: true, filter: true, field: 'comment2', headerName: 'Comment 2' },
-  { sortable: true, filter: true, field: 'dateLastUpdateDat', headerName: 'Date last update dat', type: 'datetime', format: defaultDateTimeFormat  },
+  { sortable: true, filter: true, field: 'dateLastUpdateDat', headerName: 'Date last update dat', type: 'datetime', format: defaultDateTimeFormat },
   { sortable: true, filter: true, field: 'statusLoadDatDescription', headerName: 'Status load' },
   { sortable: true, filter: true, field: 'priceDatMin', headerName: 'Price Dat Min', type: 'currency' },
   { sortable: true, filter: true, field: 'priceDatAvg', headerName: 'Price Dat Avg', type: 'currency' },
@@ -27,9 +38,9 @@ const columnDefinition = [
   { sortable: true, filter: true, field: 'priceDatOil', headerName: 'Price Dat Oil', type: 'currency' },
   { sortable: true, filter: true, field: 'milesDat', headerName: 'Miles Dat' },
   { sortable: true, filter: true, field: 'milesGoogle', headerName: 'Miles Google' },
-  { sortable: true, filter: true, field: 'priceDifferenceMin', headerName: 'Price Difference Min', type: 'currency'  },
-  { sortable: true, filter: true, field: 'priceDifferenceAvg', headerName: 'Price Difference Avg', type: 'currency'  },
-  { sortable: true, filter: true, field: 'priceDifferenceMax', headerName: 'Price Difference Max', type: 'currency'  },
+  { sortable: true, filter: true, field: 'priceDifferenceMin', headerName: 'Price Difference Min', type: 'currency' },
+  { sortable: true, filter: true, field: 'priceDifferenceAvg', headerName: 'Price Difference Avg', type: 'currency' },
+  { sortable: true, filter: true, field: 'priceDifferenceMax', headerName: 'Price Difference Max', type: 'currency' },
   { sortable: true, filter: true, field: 'dateNegotiation', headerName: 'Date Negotiation', type: 'datetime', format: defaultDateTimeFormat },
   { sortable: true, filter: true, field: 'dateCancelled', headerName: 'DateCancelled', type: 'datetime', format: defaultDateTimeFormat },
   { sortable: true, filter: true, field: 'reasonForCancellationId', headerName: 'Reason for Cancellation' },
@@ -39,25 +50,25 @@ const columnDefinition = [
   { sortable: true, filter: true, field: 'dateDeliveryEstimated', headerName: 'Date delivery estimated', type: 'datetime', format: defaultDateTimeFormat },
   { sortable: true, filter: true, field: 'dateDeliveryActual', headerName: 'Date delivery actual', type: 'datetime', format: defaultDateTimeFormat },
   { sortable: true, filter: true, field: 'isActive', headerName: 'Is active', type: 'boolean' }
-];
+]
 
-export default Vue.extend({
-  name: 'ServeDev',
+export default {
+  name: 'App',
   components: {
     VueEditableGrid
   },
-  data() {
+  data () {
     return {
       columnDefs: columnDefinition,
       rows: [],
       gridDisplays: ['Say: hello']
     }
   },
-  created() {
+  created () {
     this.filterShipments()
   },
   methods: {
-    filterShipments() {
+    filterShipments () {
       const datetimeColumns = this.columnDefs.filter(col => col.type === 'datetime')
       const map = shipment => {
         datetimeColumns.forEach(column => {
@@ -68,12 +79,12 @@ export default Vue.extend({
       this.rows = data.map(row => map(row))
       this.formatShipments()
     },
-    formatShipments() {
+    formatShipments () {
       this.rows.forEach(shipment => {
         this.formatShipment(shipment)
       })
     },
-    formatShipment(shipment) {
+    formatShipment (shipment) {
       const red = '#ffe5e5'
       const green = '#b6f7b6'
       const { poStatusId, priceRate, priceDatAvg } = shipment
@@ -83,30 +94,20 @@ export default Vue.extend({
         purchaseOrder: purchaseOrderBgColor && { backgroundColor: purchaseOrderBgColor },
         priceRate: priceRateBgColor && { backgroundColor: priceRateBgColor }
       }
-    },
+    }
   }
-});
+}
 </script>
 
-<template>
-  <div id="app">
-    <vue-editable-grid
-      class="grid"
-      :column-defs="columnDefs"
-      :row-data="rows"
-      :pageCount='0'
-      :displays="gridDisplays"
-    ></vue-editable-grid>
-  </div>
-</template>
-
-<style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
-}
-
+<style lang="scss">
 #app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+  font-size: 14px;
   height: 400px;
 }
 
