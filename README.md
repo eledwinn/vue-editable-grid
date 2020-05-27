@@ -1,6 +1,55 @@
 # vue-editable-grid
 
-## Project setup
+## How to install
+
+```
+npm install vue-editable-grid vue-currency-filter @vuejs-community/vue-filter-date-format
+```
+
+Then import in you main file
+
+```js
+import Vue from 'vue'
+
+// external dependencies
+import VueCurrencyFilter from 'vue-currency-filter'
+import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format';
+// Vue editable grid component and styles
+import VueEditableGrid from 'vue-editable-grid'
+import 'vue-editable-grid/dist/VueEditableGrid.css'
+
+// external dependencies
+Vue.use(VueFilterDateFormat)
+Vue.use(VueCurrencyFilter)
+
+// register component in the Vue app
+Vue.component('vue-editable-grid', VueEditableGrid)
+```
+
+Now you can use it
+```html
+<vue-editable-grid
+  class="grid"
+  :column-defs="columnDefs"
+  :row-data="shipmentsFiltered"
+  :pageCount='0'
+  :displays='gridDisplays'
+  @cell-updated="cellUpdated"
+  @row-selected="rowSelected"
+></vue-editable-grid>
+```
+Column definition format:
+```js
+const columnDefs = [
+  { sortable: true, filter: true, field: 'shipmentId', headerName: 'Id', checkboxSelection: true },
+  { sortable: true, filter: true, field: 'datePublication', headerName: 'Date Publication', type: 'datetime', format: defaultDateTimeFormat },
+  { sortable: true, filter: true, field: 'typeTruckDescription', headerName: 'Truck' },
+  { sortable: true, filter: true, field: 'countryName', headerName: 'Cuty' },
+  { sortable: true, filter: true, field: 'ammount', headerName: 'Ammount', type: 'currency' }
+]
+```
+
+## How to colaborate
 ```
 npm install
 ```
