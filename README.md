@@ -41,13 +41,38 @@ Now you can use it
 Column definition format:
 ```js
 const columnDefs = [
-  { sortable: true, filter: true, field: 'shipmentId', headerName: 'Id', checkboxSelection: true },
-  { sortable: true, filter: true, field: 'datePublication', headerName: 'Date Publication', type: 'datetime', format: defaultDateTimeFormat },
+  { sortable: true, filter: true, field: 'shipmentId', headerName: 'Id' },
+  { sortable: true, filter: true, field: 'datePublication', headerName: 'Date Publication', type: 'datetime', format: 'M-YYYY' },
   { sortable: true, filter: true, field: 'typeTruckDescription', headerName: 'Truck' },
   { sortable: true, filter: true, field: 'countryName', headerName: 'Cuty' },
   { sortable: true, filter: true, field: 'ammount', headerName: 'Ammount', type: 'currency' }
 ]
 ```
+
+
+## Column definition reference
+
+### sortable
+If column can be sort
+
+default: false
+
+### filter
+If column can be filter
+
+default: false
+
+### field
+TODO ...
+
+### headerName
+TODO ...
+
+### type
+TODO ...
+
+### format
+TODO ...
 
 ## How to colaborate
 ```
