@@ -9,8 +9,8 @@ td.cell(
 )
   div.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
     input(
-      type='text'
-      v-model='value'
+      :type='inputType'
+      ref='input'
       @keyup.enter='setEditableValue'
       @keydown.tab='setEditableValue'
       @keyup.esc='editCancelled'
@@ -18,7 +18,7 @@ td.cell(
       @blur='leaved'
     )
   div(v-else)
-    span(v-if='!row[column.field] && row[column.field] !== 0')
+    span(v-if='!row[column.field] && row[column.field] !== 0 && row[column.field] !== false')
     span(v-else-if='column.type === "currency"') {{ row[column.field] | currency }}
     span(v-else-if='column.type === "date"') {{ row[column.field] | dateFormat(column.format || 'YYYY-MM-DD') }}
     span(v-else-if='column.type === "datetime"') {{ row[column.field] | dateFormat(column.format || 'YYYY-MM-DD HH:mm:ss') }}
@@ -28,6 +28,7 @@ td.cell(
 
 <script>
 import Vue from 'vue'
+import { format, parse, parseISO } from 'date-fns'
 
 export default {
   props: {
@@ -52,6 +53,16 @@ export default {
     },
     invalid () {
       return this.cellsWithErrors[`cell${this.rowIndex}-${this.columnIndex}`]
+    },
+    inputType () {
+      switch (this.column.type) {
+        case 'text': return 'text'
+        case 'numeric': return 'number'
+        case 'currency': return 'number'
+        case 'date': return 'date'
+        case 'datetime': return 'datetime-local'
+      }
+      return 'text'
     }
   },
   watch: {
@@ -59,14 +70,38 @@ export default {
       if (this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex) {
         this.value = this.cellEditing[3] ? null : this.row[this.column.field]
         Vue.nextTick(() => {
-          document.querySelector(`#cell${this.rowIndex}-${this.columnIndex} input`).focus()
+          const input = this.$refs.input
+          if (!this.value && this.value !== 0 && this.value !== false) {
+            input.value = null
+            return
+          }
+          if (this.column.type === 'datetime') {
+            const formattedDate = `${format(this.value, 'yyyy-MM-dd')}T${format(this.value, 'HH:mm')}`
+            setTimeout(() => {
+              input.value = formattedDate
+            }, 100)
+          } if (this.column.type === 'date') {
+            const formattedDate = `${format(this.value, 'yyyy-MM-dd')}`
+            input.value = formattedDate
+          } else {
+            input.value = this.value
+          }
+          input.focus()
         })
       }
     }
   },
   methods: {
     setEditableValue ($event) {
-      const { row, column, rowIndex, columnIndex, value } = this
+      let value = this.$refs.input.value
+      if (value && this.column.type === 'date') {
+        value = parse(value, 'yyyy-MM-dd')
+      } else if (value && this.column.type === 'datetime') {
+        value = parseISO(value)
+      } else if (value && this.column.type === 'boolean') {
+        value = ['y', 'yes', 'true', 't', 'si', 's', '1'].indexOf(value.toLowerCase()) >= 0
+      }
+      const { row, column, rowIndex, columnIndex } = this
       this.editPending = false
       this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value })
     },
