@@ -28,7 +28,8 @@ td.cell(
 
 <script>
 import Vue from 'vue'
-import { format, parse, parseISO } from 'date-fns'
+import { format } from 'date-fns'
+import { cellValueParser } from './helpers'
 
 export default {
   props: {
@@ -93,14 +94,7 @@ export default {
   },
   methods: {
     setEditableValue ($event) {
-      let value = this.$refs.input.value
-      if (value && this.column.type === 'date') {
-        value = parse(value, 'yyyy-MM-dd')
-      } else if (value && this.column.type === 'datetime') {
-        value = parseISO(value)
-      } else if (value && this.column.type === 'boolean') {
-        value = ['y', 'yes', 'true', 't', 'si', 's', '1'].indexOf(value.toLowerCase()) >= 0
-      }
+      const value = cellValueParser(this.column, this.$refs.input.value, true)
       const { row, column, rowIndex, columnIndex } = this
       this.editPending = false
       this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value })
