@@ -20,8 +20,8 @@ td.cell(
   div(v-else)
     span(v-if='!row[column.field] && row[column.field] !== 0 && row[column.field] !== false')
     span(v-else-if='column.type === "currency"') {{ row[column.field] | currency }}
-    span(v-else-if='column.type === "date"') {{ row[column.field] | dateFormat(column.format || 'YYYY-MM-DD') }}
-    span(v-else-if='column.type === "datetime"') {{ row[column.field] | dateFormat(column.format || 'YYYY-MM-DD HH:mm:ss') }}
+    span(v-else-if='column.type === "date"') {{ row[column.field] | cellFormatter(column) }}
+    span(v-else-if='column.type === "datetime"') {{ row[column.field] | cellFormatter(column) }}
     span(v-else-if='column.type === "boolean"') {{ row[column.field] ? 'Y' : 'N' }}
     span(v-else) {{ row[column.field] }}
 </template>
@@ -30,8 +30,12 @@ td.cell(
 import Vue from 'vue'
 import { format } from 'date-fns'
 import { cellValueParser } from './helpers'
+import { cellFormatter } from './filters'
 
 export default {
+  filters: {
+    cellFormatter
+  },
   props: {
     column: { type: Object },
     row: { type: Object },

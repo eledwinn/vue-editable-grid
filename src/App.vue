@@ -16,8 +16,8 @@ import VueEditableGrid from './components/VueEditableGrid.vue'
 
 import data from './data'
 
-export const defaultDateFormat = 'MMM DD, YYYY'
-export const defaultDateTimeFormat = 'MMM DD, YYYY h:mm a'
+export const defaultDateFormat = 'MMM dd, yyyy'
+export const defaultDateTimeFormat = 'MMM dd, yyyy h:mm a'
 
 const columnDefinition = [
   { sortable: true, filter: true, field: 'shipmentId', headerName: 'Id', editable: true },
