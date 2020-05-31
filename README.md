@@ -11,16 +11,9 @@ Then import in you main file
 ```js
 import Vue from 'vue'
 
-// external dependencies
-import VueCurrencyFilter from 'vue-currency-filter'
-import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format';
 // Vue editable grid component and styles
 import VueEditableGrid from 'vue-editable-grid'
 import 'vue-editable-grid/dist/VueEditableGrid.css'
-
-// external dependencies
-Vue.use(VueFilterDateFormat)
-Vue.use(VueCurrencyFilter)
 
 // register component in the Vue app
 Vue.component('vue-editable-grid', VueEditableGrid)
@@ -42,37 +35,45 @@ Column definition format:
 ```js
 const columnDefs = [
   { sortable: true, filter: true, field: 'shipmentId', headerName: 'Id' },
-  { sortable: true, filter: true, field: 'datePublication', headerName: 'Date Publication', type: 'datetime', format: 'M-YYYY' },
+  { sortable: true, filter: true, field: 'datePublication', headerName: 'Date Publication', type: 'datetime', format: 'MMM dd, yyyy' },
   { sortable: true, filter: true, field: 'typeTruckDescription', headerName: 'Truck' },
   { sortable: true, filter: true, field: 'countryName', headerName: 'Cuty' },
   { sortable: true, filter: true, field: 'ammount', headerName: 'Ammount', type: 'currency' }
 ]
 ```
 
-
 ## Column definition reference
 
 ### sortable
 If column can be sort
 
-default: false
+Default: `false`
 
 ### filter
 If column can be filter
 
-default: false
+Default: `false`
 
 ### field
-TODO ...
+Key name for column in `row-data` items
 
 ### headerName
-TODO ...
+Name for column header
 
 ### type
-TODO ...
+Data type, possible vales: `datetime`, `date`, `text`, `numeric`, `currency`, `boolean`.
+
+Default: `text`
 
 ### format
-TODO ...
+Data column format, only apply for `date` and `datetime` column types.
+
+Refer to [date-fns format table](https://date-fns.org/v2.14.0/docs/format) for more details.
+
+### editable
+Allow to edit column values.
+
+Default: `false`
 
 ## How to colaborate
 ```
