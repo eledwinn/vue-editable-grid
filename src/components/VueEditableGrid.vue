@@ -345,18 +345,15 @@ export default {
         const markAsSuccess = () => {
           this.setCellError(rowIndex, columnIndex, false)
         }
-        if (value === row[column.field]) {
-          confirm()
+
+        this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess })
+        if (prevent) {
+          this.cellEditing = []
           resolve()
-        } else {
-          this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess })
-          if (prevent) {
-            this.cellEditing = []
-            resolve()
-          } else if (!changePending) {
-            confirm()
-          }
+        } else if (!changePending) {
+          confirm()
         }
+
         if (eventCode === 'Tab') {
           $event.preventDefault()
         }

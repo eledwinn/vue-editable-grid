@@ -7,7 +7,7 @@ td.cell(
   @click='$emit("click", $event)'
   @dblclick='$emit("dblclick", $event)'
 )
-  div.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
+  span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
     input(
       :type='inputType'
       ref='input'
@@ -17,20 +17,14 @@ td.cell(
       @focus='editPending = true'
       @blur='leaved'
     )
-  div(v-else)
-    span(v-if='!row[column.field] && row[column.field] !== 0 && row[column.field] !== false')
-    span(v-else-if='column.type === "currency"') {{ row[column.field] | currency }}
-    span(v-else-if='column.type === "date"') {{ row[column.field] | cellFormatter(column) }}
-    span(v-else-if='column.type === "datetime"') {{ row[column.field] | cellFormatter(column) }}
-    span(v-else-if='column.type === "boolean"') {{ row[column.field] ? 'Y' : 'N' }}
-    span(v-else) {{ row[column.field] }}
+  span(v-else) {{ row[column.field] | cellFormatter(column) }}
 </template>
 
 <script>
 import Vue from 'vue'
 import { format } from 'date-fns'
-import { cellValueParser } from './helpers'
-import { cellFormatter } from './filters'
+import { cellValueParser, sameDates } from './helpers'
+import { cellFormatter } from './vue-filters.js'
 
 export default {
   filters: {
@@ -84,7 +78,7 @@ export default {
             const formattedDate = `${format(this.value, 'yyyy-MM-dd')}T${format(this.value, 'HH:mm')}`
             setTimeout(() => {
               input.value = formattedDate
-            }, 100)
+            }, 50)
           } if (this.column.type === 'date') {
             const formattedDate = `${format(this.value, 'yyyy-MM-dd')}`
             input.value = formattedDate
@@ -99,8 +93,12 @@ export default {
   methods: {
     setEditableValue ($event) {
       const value = cellValueParser(this.column, this.$refs.input.value, true)
-      const { row, column, rowIndex, columnIndex } = this
       this.editPending = false
+      if (value === this.value) return
+      if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
+        if (sameDates(value, this.value)) return
+      }
+      const { row, column, rowIndex, columnIndex } = this
       this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value })
     },
     editCancelled () {
@@ -134,7 +132,8 @@ export default {
     border-color: $cell-selected-border-color;
   }
 
-  &.currency {
+  &.currency,
+  &.numeric {
     text-align: right;
   }
 
