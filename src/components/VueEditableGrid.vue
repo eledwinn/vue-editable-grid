@@ -54,7 +54,7 @@ div.grid-container
 </template>
 
 <script>
-import { filterAndSort, checkFocus } from './helpers'
+import { filterAndSort, checkFocus, cellValueParser } from './helpers'
 import { initResize } from './header-resize'
 import Paginate from './Paginate.vue'
 import Cell from './Cell'
@@ -143,6 +143,13 @@ export default {
                 if (row && column && column.editable) {
                   rowIndex = sRowIndex + rIdx
                   columnIndex = sColIndex + cIdx
+                  this.setCellError(rowIndex, columnIndex, false)
+                  try {
+                    value = cellValueParser(column, value, false)
+                  } catch (error) {
+                    this.setCellError(rowIndex, columnIndex, error)
+                    value = null
+                  }
                   this.setEditableValue(row, column, rowIndex, columnIndex, value, null)
                 }
               })
@@ -289,6 +296,14 @@ export default {
         this.cellEditing = [rowIndex, columnIndex, reset]
       }
     },
+    setCellError (rowIndex, columnIndex, error) {
+      const cellId = `cell${rowIndex}-${columnIndex}`
+      if (error) {
+        this.$set(this.cellsWithErrors, cellId, error)
+      } else {
+        this.$delete(this.cellsWithErrors, cellId)
+      }
+    },
     cellEdited ({ row, column, rowIndex, columnIndex, value, $event }) {
       this.setEditableValue(row, column, rowIndex, columnIndex, value, $event)
     },
@@ -325,23 +340,20 @@ export default {
           resolve()
         }
         const markAsFailed = error => {
-          this.$set(this.cellsWithErrors, cellId, error || true)
+          this.setCellError(rowIndex, columnIndex, error || 'Error in value or value format')
         }
         const markAsSuccess = () => {
-          this.$delete(this.cellsWithErrors, cellId, false)
+          this.setCellError(rowIndex, columnIndex, false)
         }
-        if (value === row[column.field]) {
-          confirm()
+
+        this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess })
+        if (prevent) {
+          this.cellEditing = []
           resolve()
-        } else {
-          this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess })
-          if (prevent) {
-            this.cellEditing = []
-            resolve()
-          } else if (!changePending) {
-            confirm()
-          }
+        } else if (!changePending) {
+          confirm()
         }
+
         if (eventCode === 'Tab') {
           $event.preventDefault()
         }

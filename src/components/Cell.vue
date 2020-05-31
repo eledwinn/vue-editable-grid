@@ -7,29 +7,29 @@ td.cell(
   @click='$emit("click", $event)'
   @dblclick='$emit("dblclick", $event)'
 )
-  div.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
+  span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
     input(
-      type='text'
-      v-model='value'
+      :type='inputType'
+      ref='input'
       @keyup.enter='setEditableValue'
       @keydown.tab='setEditableValue'
       @keyup.esc='editCancelled'
       @focus='editPending = true'
       @blur='leaved'
     )
-  div(v-else)
-    span(v-if='!row[column.field] && row[column.field] !== 0')
-    span(v-else-if='column.type === "currency"') {{ row[column.field] | currency }}
-    span(v-else-if='column.type === "date"') {{ row[column.field] | dateFormat(column.format || 'YYYY-MM-DD') }}
-    span(v-else-if='column.type === "datetime"') {{ row[column.field] | dateFormat(column.format || 'YYYY-MM-DD HH:mm:ss') }}
-    span(v-else-if='column.type === "boolean"') {{ row[column.field] ? 'Y' : 'N' }}
-    span(v-else) {{ row[column.field] }}
+  span(v-else) {{ row[column.field] | cellFormatter(column) }}
 </template>
 
 <script>
 import Vue from 'vue'
+import { format } from 'date-fns'
+import { cellValueParser, sameDates } from './helpers'
+import { cellFormatter } from './vue-filters.js'
 
 export default {
+  filters: {
+    cellFormatter
+  },
   props: {
     column: { type: Object },
     row: { type: Object },
@@ -52,6 +52,16 @@ export default {
     },
     invalid () {
       return this.cellsWithErrors[`cell${this.rowIndex}-${this.columnIndex}`]
+    },
+    inputType () {
+      switch (this.column.type) {
+        case 'text': return 'text'
+        case 'numeric': return 'number'
+        case 'currency': return 'number'
+        case 'date': return 'date'
+        case 'datetime': return 'datetime-local'
+      }
+      return 'text'
     }
   },
   watch: {
@@ -59,15 +69,36 @@ export default {
       if (this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex) {
         this.value = this.cellEditing[3] ? null : this.row[this.column.field]
         Vue.nextTick(() => {
-          document.querySelector(`#cell${this.rowIndex}-${this.columnIndex} input`).focus()
+          const input = this.$refs.input
+          if (!this.value && this.value !== 0 && this.value !== false) {
+            input.value = null
+            return
+          }
+          if (this.column.type === 'datetime') {
+            const formattedDate = `${format(this.value, 'yyyy-MM-dd')}T${format(this.value, 'HH:mm')}`
+            setTimeout(() => {
+              input.value = formattedDate
+            }, 50)
+          } if (this.column.type === 'date') {
+            const formattedDate = `${format(this.value, 'yyyy-MM-dd')}`
+            input.value = formattedDate
+          } else {
+            input.value = this.value
+          }
+          input.focus()
         })
       }
     }
   },
   methods: {
     setEditableValue ($event) {
-      const { row, column, rowIndex, columnIndex, value } = this
+      const value = cellValueParser(this.column, this.$refs.input.value, true)
       this.editPending = false
+      if (value === this.value) return
+      if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
+        if (sameDates(value, this.value)) return
+      }
+      const { row, column, rowIndex, columnIndex } = this
       this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value })
     },
     editCancelled () {
@@ -101,7 +132,8 @@ export default {
     border-color: $cell-selected-border-color;
   }
 
-  &.currency {
+  &.currency,
+  &.numeric {
     text-align: right;
   }
 
