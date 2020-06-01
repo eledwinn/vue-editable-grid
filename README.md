@@ -3,7 +3,7 @@
 ## How to install
 
 ```
-npm install vue-editable-grid vue-currency-filter @vuejs-community/vue-filter-date-format
+npm install vue-editable-grid
 ```
 
 Then import in you main file
