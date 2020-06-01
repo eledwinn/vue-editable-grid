@@ -49,26 +49,16 @@ export default {
     }
   },
   created () {
-    this.filterShipments()
+    this.formatData()
   },
   methods: {
-    filterShipments () {
-      const datetimeColumns = this.columnDefs.filter(col => col.type === 'datetime')
-      const map = shipment => {
-        datetimeColumns.forEach(column => {
-          shipment[column.field] = shipment[column.field] && new Date(shipment[column.field])
-        })
-        return shipment
-      }
-      this.rows = data.map(row => map(row))
-      this.formatShipments()
-    },
-    formatShipments () {
-      this.rows.forEach(shipment => {
-        this.formatShipment(shipment)
+    formatData () {
+      data.forEach(shipment => {
+        this.formatRow(shipment)
       })
+      this.rows = data
     },
-    formatShipment (shipment) {
+    formatRow (shipment) {
       const red = '#ffe5e5'
       const green = '#b6f7b6'
       const { poStatusId, priceRate, priceDatAvg } = shipment

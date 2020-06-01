@@ -4,8 +4,14 @@ import { defaultDateTimeFormat, defaultDateFormat, currencyFormatter, numericFor
 export const cellFormatter = function (value, column) {
   if (!value && value !== false && value !== 0) return ''
   switch (column.type) {
-    case 'date': return format(value, column.format || defaultDateFormat)
-    case 'datetime': return format(value, column.format || defaultDateTimeFormat)
+    case 'date': {
+      if (typeof value === 'string') value = new Date(value)
+      return format(value, column.format || defaultDateFormat)
+    }
+    case 'datetime': {
+      if (typeof value === 'string') value = new Date(value)
+      return format(value, column.format || defaultDateTimeFormat)
+    }
     case 'boolean': return value ? 'Y' : 'N'
     case 'numeric': return numericFormatter.format(value)
     case 'currency': return currencyFormatter.format(value)
