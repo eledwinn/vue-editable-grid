@@ -32,7 +32,7 @@ div.grid-container
             input(type='text' v-model='filter[column.field]' placeholder='Search with , or &' @input='filtersChanged')
       tbody(ref='body')
         div(:style=' { "min-height": `${rowDataPage.length * itemHeight}px` }')
-          tr.gridrow(v-for='(row, rowIndex) in visibleRows' :key='row.shipmentId' :style='{ "grid-template-columns": gridTemplateColumns, transform: `translateY(${(itemHeight * rowIndex) + ((itemHeight * offsetRows))}px)` }')
+          tr.gridrow(v-for='(row, rowIndex) in visibleRows' :key='row.shipmentId' :style='{ "grid-template-columns": gridTemplateColumns, transform: `translateY(${(itemHeight * rowIndex) + ((itemHeight * offsetRows))}px)`, height: `${itemHeight}px` }')
             cell(
               v-for='(column, columnIndex) in columnDefs'
               :ref='`cell`'
@@ -102,7 +102,8 @@ export default {
         return
       }
       const key = $event.key
-
+      const isControl = $event.metaKey || $event.ctrlKey
+      console.log($event)
       if (key === 'ArrowDown') {
         this.sumSelectionRow(1)
         $event.preventDefault()
@@ -124,7 +125,7 @@ export default {
       } else if (key === 'F2') {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
         this.tryEdit(rowData, colData, rowIndex, colIndex)
-      } else if (key === 'v' && $event.metaKey) {
+      } else if (key === 'v' && isControl) {
         this.$refs.tmp.value = ''
         this.$refs.tmp.focus()
         setTimeout(() => {
@@ -157,7 +158,7 @@ export default {
             this.selEnd = [rowIndex, columnIndex]
           }
         }, 100)
-      } else if ($event.metaKey && (key === 'c' || key === 'x')) {
+      } else if (isControl && (key === 'c' || key === 'x')) {
         const { colData, rowData } = this.getCell()
         const value = rowData[colData.field]
         this.$refs.tmp.value = value || ''
