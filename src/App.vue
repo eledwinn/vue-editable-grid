@@ -2,6 +2,7 @@
   <div id="app">
     <vue-editable-grid
       class="grid"
+      ref="grid"
       :column-defs="columnDefs"
       :row-data="rows"
       :pageCount='0'
@@ -50,6 +51,9 @@ export default {
   },
   created () {
     this.formatData()
+  },
+  mounted () {
+    console.log(this.$refs.grid.getFormattedRows())
   },
   methods: {
     formatData () {

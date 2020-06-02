@@ -55,6 +55,7 @@ div.grid-container
 
 <script>
 import { filterAndSort, checkFocus, cellValueParser } from './helpers'
+import { cellFormatter } from './vue-filters'
 import { initResize } from './header-resize'
 import Paginate from './Paginate.vue'
 import Cell from './Cell'
@@ -422,6 +423,14 @@ export default {
         this.filter = {}
       }
       this.renderVisibleScroll()
+    },
+    getFormattedRows () {
+      return this.rowData.map(row => {
+        return this.columnDefs.reduce((rowFormatted, column) => {
+          rowFormatted[column.field] = cellFormatter(row[column.field], column)
+          return rowFormatted
+        }, {})
+      })
     }
   }
 }

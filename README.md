@@ -85,6 +85,32 @@ Default: `false`
 Emited when cell value is changed.
 TODO: ...
 
+### row-selected
+Emited when row selection is changed.
+
+## Methods
+
+You can access to VieEditableGrid instance using `ref` property.
+```html
+<vue-editable-grid
+  ref="grid"
+  ...
+></vue-editable-grid>
+```
+
+In your component script
+```js
+export default {
+  mounted () {
+    const data = this.$refs.grid.getFormattedRows()
+  },
+  ...
+}
+```
+
+### getFormattedRows()
+Allow to get a complete row data passed in `row-data` property but with all format applied. This is very useful for example when you want to export the data.
+
 ## How to colaborate
 ```
 npm install
