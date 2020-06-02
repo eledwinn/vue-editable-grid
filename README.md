@@ -25,7 +25,6 @@ Now you can use it
   class="grid"
   :column-defs="columnDefs"
   :row-data="shipmentsFiltered"
-  :pageCount='0'
   :displays='gridDisplays'
   @cell-updated="cellUpdated"
   @row-selected="rowSelected"
@@ -44,7 +43,40 @@ const columnDefs = [
 
 ## Properties
 
-TODO: ...
+```js
+{
+  columnDefs: { type: Array },
+  rowData: { type: Array },
+  pageCount: { type: Number, default: 0 },
+  displays: { type: Array },
+  itemHeight: { type: Number, default: 30 },
+  virtualScrollOffset: { type: Number, default: 3 }
+}
+```
+
+### columnDefs `(array)`
+Define the column definition
+
+### rowData `(array)`
+Define the grid content data
+
+### pageCount `(number)`
+Define how many elements per page are showed. If pageCount is `0`, grid pagination is disabled.
+
+Default value: `0`
+
+### displays `(srray of string)`
+Array of elements to show in grid top section like informative values.
+
+### itemHeight `(number)`
+Height of rows in pixels.
+
+default value: `30`
+
+### virtualScrollOffset `(number)`
+How many elements (rows) are rendered outside grid visible scroll.
+
+default value: `3`
 
 ## Column definition reference
 
@@ -90,7 +122,7 @@ Emited when row selection is changed.
 
 ## Methods
 
-You can access to VieEditableGrid instance using `ref` property.
+You can access to VueEditableGrid instance using `ref` property.
 ```html
 <vue-editable-grid
   ref="grid"
