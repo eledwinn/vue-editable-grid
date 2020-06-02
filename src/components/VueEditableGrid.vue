@@ -151,7 +151,7 @@ export default {
                     this.setCellError(rowIndex, columnIndex, error)
                     value = null
                   }
-                  this.setEditableValue(row, column, rowIndex, columnIndex, value, null)
+                  this.setEditableValue(row, column, rowIndex, columnIndex, value, true, null)
                 }
               })
             })
@@ -305,11 +305,16 @@ export default {
         this.$delete(this.cellsWithErrors, cellId)
       }
     },
-    cellEdited ({ row, column, rowIndex, columnIndex, value, $event }) {
-      this.setEditableValue(row, column, rowIndex, columnIndex, value, $event)
+    cellEdited ({ row, column, rowIndex, columnIndex, value, $event, valueChanged }) {
+      this.setEditableValue(row, column, rowIndex, columnIndex, value, valueChanged, $event)
     },
-    setEditableValue (row, column, rowIndex, columnIndex, value, $event) {
+    setEditableValue (row, column, rowIndex, columnIndex, value, valueChanged, $event) {
       return new Promise(resolve => {
+        if (!valueChanged) {
+          this.cellEditing = []
+          resolve()
+          return
+        }
         const cellId = `cell${rowIndex}-${columnIndex}`
         const input = document.querySelector(`#${cellId} input`)
         const eventCode = $event && $event.code

@@ -92,14 +92,16 @@ export default {
   },
   methods: {
     setEditableValue ($event) {
+      console.log($event)
       const value = cellValueParser(this.column, this.$refs.input.value, true)
       this.editPending = false
-      if (value === this.value) return
-      if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
-        if (sameDates(value, this.value)) return
+      let valueChanged = true
+      if (value === this.value) valueChanged = false
+      else if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
+        if (sameDates(value, this.value)) valueChanged = false
       }
       const { row, column, rowIndex, columnIndex } = this
-      this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value })
+      this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value, valueChanged })
     },
     editCancelled () {
       this.$emit('edit-cancelled')
