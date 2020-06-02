@@ -41,7 +41,7 @@ export default {
     cellsWithErrors: { type: Object }
   },
   data () {
-    return { value: null, editPending: false }
+    return { value: null, rowValue: null, editPending: false }
   },
   computed: {
     selected () {
@@ -67,39 +67,53 @@ export default {
   watch: {
     cellEditing () {
       if (this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex) {
-        this.value = this.cellEditing[3] ? null : this.row[this.column.field]
+        this.rowValue = this.getEditableValue(this.row[this.column.field])
+        this.value = this.getEditableValue(this.cellEditing[2] || this.row[this.column.field])
+
         Vue.nextTick(() => {
           const input = this.$refs.input
           if (!this.value && this.value !== 0 && this.value !== false) {
             input.value = null
+            input.focus()
             return
           }
-          if (this.column.type === 'datetime') {
-            const formattedDate = `${format(this.value, 'yyyy-MM-dd')}T${format(this.value, 'HH:mm')}`
+          if (this.column.type === 'datetime' || this.column.type === 'date') {
+            const formattedDate = this.column.type === 'datetime'
+              ? `${format(this.value, 'yyyy-MM-dd')}T${format(this.value, 'HH:mm')}`
+              : `${format(this.value, 'yyyy-MM-dd')}`
             setTimeout(() => {
               input.value = formattedDate
+              input.focus()
             }, 50)
-          } if (this.column.type === 'date') {
-            const formattedDate = `${format(this.value, 'yyyy-MM-dd')}`
-            input.value = formattedDate
           } else {
             input.value = this.value
+            input.focus()
           }
-          input.focus()
         })
       }
     }
   },
   methods: {
+    getEditableValue (value) {
+      if (this.column.type === 'datetime' || this.column.type === 'date') {
+        if (typeof value === 'string') {
+          const parsedDate = new Date(value)
+          return isNaN(parsedDate) ? null : parsedDate
+        }
+      }
+      return value
+    },
     setEditableValue ($event) {
+      console.log(this.$refs.input.value)
       const value = cellValueParser(this.column, this.$refs.input.value, true)
       this.editPending = false
-      if (value === this.value) return
-      if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
-        if (sameDates(value, this.value)) return
+      let valueChanged = true
+      if (value === this.rowValue) valueChanged = false
+      else if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
+        if (sameDates(value, this.rowValue)) valueChanged = false
       }
       const { row, column, rowIndex, columnIndex } = this
-      this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value })
+      this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value, valueChanged })
     },
     editCancelled () {
       this.$emit('edit-cancelled')

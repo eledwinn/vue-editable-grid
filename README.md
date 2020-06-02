@@ -42,6 +42,10 @@ const columnDefs = [
 ]
 ```
 
+## Properties
+
+TODO: ...
+
 ## Column definition reference
 
 ### sortable
@@ -74,6 +78,12 @@ Refer to [date-fns format table](https://date-fns.org/v2.14.0/docs/format) for m
 Allow to edit column values.
 
 Default: `false`
+
+## Events
+
+### cell-updated
+Emited when cell value is changed.
+TODO: ...
 
 ## How to colaborate
 ```

@@ -32,7 +32,7 @@ div.grid-container
             input(type='text' v-model='filter[column.field]' placeholder='Search with , or &' @input='filtersChanged')
       tbody(ref='body')
         div(:style=' { "min-height": `${rowDataPage.length * itemHeight}px` }')
-          tr.gridrow(v-for='(row, rowIndex) in visibleRows' :key='row.shipmentId' :style='{ "grid-template-columns": gridTemplateColumns, transform: `translateY(${(itemHeight * rowIndex) + ((itemHeight * offsetRows))}px)` }')
+          tr.gridrow(v-for='(row, rowIndex) in visibleRows' :key='row.shipmentId' :style='{ "grid-template-columns": gridTemplateColumns, transform: `translateY(${(itemHeight * rowIndex) + ((itemHeight * offsetRows))}px)`, height: `${itemHeight}px` }')
             cell(
               v-for='(column, columnIndex) in columnDefs'
               :ref='`cell`'
@@ -102,18 +102,22 @@ export default {
         return
       }
       const key = $event.key
-
+      const isControl = $event.metaKey || $event.ctrlKey
       if (key === 'ArrowDown') {
-        this.sumSelectionRow(1)
+        if (isControl) this.selectLastRow()
+        else this.sumSelectionRow(1)
         $event.preventDefault()
       } else if (key === 'ArrowRight') {
-        this.sumSelectionCol(1)
+        if (isControl) this.selectLastCol()
+        else this.sumSelectionCol(1)
         $event.preventDefault()
       } else if (key === 'ArrowUp') {
-        this.sumSelectionRow(-1)
+        if (isControl) this.selectFirstRow()
+        else this.sumSelectionRow(-1)
         $event.preventDefault()
       } else if (key === 'ArrowLeft') {
-        this.sumSelectionCol(-1)
+        if (isControl) this.selectFirstCol()
+        else this.sumSelectionCol(-1)
         $event.preventDefault()
       } else if (key === 'Tab') {
         this.sumSelectionCol(1)
@@ -124,7 +128,7 @@ export default {
       } else if (key === 'F2') {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
         this.tryEdit(rowData, colData, rowIndex, colIndex)
-      } else if (key === 'v' && $event.metaKey) {
+      } else if (key === 'v' && isControl) {
         this.$refs.tmp.value = ''
         this.$refs.tmp.focus()
         setTimeout(() => {
@@ -150,14 +154,14 @@ export default {
                     this.setCellError(rowIndex, columnIndex, error)
                     value = null
                   }
-                  this.setEditableValue(row, column, rowIndex, columnIndex, value, null)
+                  this.setEditableValue(row, column, rowIndex, columnIndex, value, true, null)
                 }
               })
             })
             this.selEnd = [rowIndex, columnIndex]
           }
         }, 100)
-      } else if ($event.metaKey && (key === 'c' || key === 'x')) {
+      } else if (isControl && (key === 'c' || key === 'x')) {
         const { colData, rowData } = this.getCell()
         const value = rowData[colData.field]
         this.$refs.tmp.value = value || ''
@@ -165,7 +169,8 @@ export default {
         document.execCommand('copy')
       } else if (!$event.metaKey && this.selStart[0] >= 0 && isWriteableKey($event.keyCode)) {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
-        this.tryEdit(rowData, colData, rowIndex, colIndex, true)
+        $event.preventDefault()
+        this.tryEdit(rowData, colData, rowIndex, colIndex, $event.key)
       }
     })
   },
@@ -287,13 +292,15 @@ export default {
             body.scrollTop += cellBottomPosition - body.clientHeight + 2
           }
         }
-      } else {
-        // body.scrollTop += rowIndex * this.itemHeight; // this.visibleRows (this.itemHeight * 2)
+      } else if (rowIndex === 0) {
+        body.scrollTop = 0
+      } else if (rowIndex === this.rowData.length - 1) {
+        body.scrollTop = this.rowDataPage.length * this.itemHeight
       }
     },
-    tryEdit (row, column, rowIndex, columnIndex, reset) {
+    tryEdit (row, column, rowIndex, columnIndex, newValue) {
       if (column.editable) {
-        this.cellEditing = [rowIndex, columnIndex, reset]
+        this.cellEditing = [rowIndex, columnIndex, newValue]
       }
     },
     setCellError (rowIndex, columnIndex, error) {
@@ -304,11 +311,16 @@ export default {
         this.$delete(this.cellsWithErrors, cellId)
       }
     },
-    cellEdited ({ row, column, rowIndex, columnIndex, value, $event }) {
-      this.setEditableValue(row, column, rowIndex, columnIndex, value, $event)
+    cellEdited ({ row, column, rowIndex, columnIndex, value, $event, valueChanged }) {
+      this.setEditableValue(row, column, rowIndex, columnIndex, value, valueChanged, $event)
     },
-    setEditableValue (row, column, rowIndex, columnIndex, value, $event) {
+    setEditableValue (row, column, rowIndex, columnIndex, value, valueChanged, $event) {
       return new Promise(resolve => {
+        if (!valueChanged) {
+          this.cellEditing = []
+          resolve()
+          return
+        }
         const cellId = `cell${rowIndex}-${columnIndex}`
         const input = document.querySelector(`#${cellId} input`)
         const eventCode = $event && $event.code
@@ -380,6 +392,18 @@ export default {
       }, () => {
         localStorage.setItem('columns', JSON.stringify(this.columnDefsFiltered.map(({ field, size }) => ({ field, size }))))
       })
+    },
+    selectFirstCol () {
+      this.selectCell(this.selStart[0], 0)
+    },
+    selectLastCol () {
+      this.selectCell(this.selStart[0], this.columnDefs.length - 1)
+    },
+    selectFirstRow () {
+      this.selectCell(0, this.selStart[1])
+    },
+    selectLastRow () {
+      this.selectCell(this.rowData.length - 1, this.selStart[1])
     },
     sumSelectionCol (sum) {
       let [row, col] = this.selStart
