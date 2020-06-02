@@ -104,7 +104,6 @@ export default {
       return value
     },
     setEditableValue ($event) {
-      console.log(this.$refs.input.value)
       const value = cellValueParser(this.column, this.$refs.input.value, true)
       this.editPending = false
       let valueChanged = true
