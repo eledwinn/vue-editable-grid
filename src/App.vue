@@ -5,7 +5,6 @@
       ref="grid"
       :column-defs="columnDefs"
       :row-data="rows"
-      :pageCount='0'
       :displays="gridDisplays"
       @cell-updated="cellUpdated"
     ></vue-editable-grid>
@@ -53,7 +52,7 @@ export default {
     this.formatData()
   },
   mounted () {
-    console.log(this.$refs.grid.getFormattedRows())
+    // you can call methods this.$refs.grid.getFormattedRows()
   },
   methods: {
     formatData () {
