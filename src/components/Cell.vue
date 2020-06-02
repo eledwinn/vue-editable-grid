@@ -41,7 +41,7 @@ export default {
     cellsWithErrors: { type: Object }
   },
   data () {
-    return { value: null, editPending: false }
+    return { value: null, rowValue: null, editPending: false }
   },
   computed: {
     selected () {
@@ -67,10 +67,9 @@ export default {
   watch: {
     cellEditing () {
       if (this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex) {
-        this.value = this.cellEditing[3] ? null : this.row[this.column.field]
-        if (this.column.type === 'datetime' || this.column.type === 'date') {
-          this.value = typeof this.value === 'string' ? new Date(this.value) : this.value
-        }
+        this.rowValue = this.getEditableValue(this.row[this.column.field])
+        this.value = this.getEditableValue(this.cellEditing[2] || this.row[this.column.field])
+
         Vue.nextTick(() => {
           const input = this.$refs.input
           if (!this.value && this.value !== 0 && this.value !== false) {
@@ -95,13 +94,23 @@ export default {
     }
   },
   methods: {
+    getEditableValue (value) {
+      if (this.column.type === 'datetime' || this.column.type === 'date') {
+        if (typeof value === 'string') {
+          const parsedDate = new Date(value)
+          return isNaN(parsedDate) ? null : parsedDate
+        }
+      }
+      return value
+    },
     setEditableValue ($event) {
+      console.log(this.$refs.input.value)
       const value = cellValueParser(this.column, this.$refs.input.value, true)
       this.editPending = false
       let valueChanged = true
-      if (value === this.value) valueChanged = false
+      if (value === this.rowValue) valueChanged = false
       else if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
-        if (sameDates(value, this.value)) valueChanged = false
+        if (sameDates(value, this.rowValue)) valueChanged = false
       }
       const { row, column, rowIndex, columnIndex } = this
       this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value, valueChanged })
