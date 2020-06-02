@@ -103,18 +103,21 @@ export default {
       }
       const key = $event.key
       const isControl = $event.metaKey || $event.ctrlKey
-      console.log($event)
       if (key === 'ArrowDown') {
-        this.sumSelectionRow(1)
+        if (isControl) this.selectLastRow()
+        else this.sumSelectionRow(1)
         $event.preventDefault()
       } else if (key === 'ArrowRight') {
-        this.sumSelectionCol(1)
+        if (isControl) this.selectLastCol()
+        else this.sumSelectionCol(1)
         $event.preventDefault()
       } else if (key === 'ArrowUp') {
-        this.sumSelectionRow(-1)
+        if (isControl) this.selectFirstRow()
+        else this.sumSelectionRow(-1)
         $event.preventDefault()
       } else if (key === 'ArrowLeft') {
-        this.sumSelectionCol(-1)
+        if (isControl) this.selectFirstCol()
+        else this.sumSelectionCol(-1)
         $event.preventDefault()
       } else if (key === 'Tab') {
         this.sumSelectionCol(1)
@@ -166,7 +169,8 @@ export default {
         document.execCommand('copy')
       } else if (!$event.metaKey && this.selStart[0] >= 0 && isWriteableKey($event.keyCode)) {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
-        this.tryEdit(rowData, colData, rowIndex, colIndex, true)
+        $event.preventDefault()
+        this.tryEdit(rowData, colData, rowIndex, colIndex, $event.key)
       }
     })
   },
@@ -288,13 +292,15 @@ export default {
             body.scrollTop += cellBottomPosition - body.clientHeight + 2
           }
         }
-      } else {
-        // body.scrollTop += rowIndex * this.itemHeight; // this.visibleRows (this.itemHeight * 2)
+      } else if (rowIndex === 0) {
+        body.scrollTop = 0
+      } else if (rowIndex === this.rowData.length - 1) {
+        body.scrollTop = this.rowDataPage.length * this.itemHeight
       }
     },
-    tryEdit (row, column, rowIndex, columnIndex, reset) {
+    tryEdit (row, column, rowIndex, columnIndex, newValue) {
       if (column.editable) {
-        this.cellEditing = [rowIndex, columnIndex, reset]
+        this.cellEditing = [rowIndex, columnIndex, newValue]
       }
     },
     setCellError (rowIndex, columnIndex, error) {
@@ -386,6 +392,18 @@ export default {
       }, () => {
         localStorage.setItem('columns', JSON.stringify(this.columnDefsFiltered.map(({ field, size }) => ({ field, size }))))
       })
+    },
+    selectFirstCol () {
+      this.selectCell(this.selStart[0], 0)
+    },
+    selectLastCol () {
+      this.selectCell(this.selStart[0], this.columnDefs.length - 1)
+    },
+    selectFirstRow () {
+      this.selectCell(0, this.selStart[1])
+    },
+    selectLastRow () {
+      this.selectCell(this.rowData.length - 1, this.selStart[1])
     },
     sumSelectionCol (sum) {
       let [row, col] = this.selStart
