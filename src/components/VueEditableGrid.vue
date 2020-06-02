@@ -74,7 +74,7 @@ export default {
   props: {
     columnDefs: { type: Array },
     rowData: { type: Array },
-    pageCount: { type: Number, default: 10 },
+    pageCount: { type: Number, default: 0 },
     displays: { type: Array },
     itemHeight: { type: Number, default: 30 },
     virtualScrollOffset: { type: Number, default: 3 }
