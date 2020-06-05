@@ -5,6 +5,18 @@ export const defaultDateFormat = 'yyyy-MM-dd'
 export const currencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 export const numericFormatter = new Intl.NumberFormat('en-US', {})
 
+const isFilterTypeExclude = (filterValue) => {
+  return filterValue.charAt(0) === '!'
+}
+
+const applyFilter = (filterValue, row, filterKey) => {
+  const value = isFilterTypeExclude(filterValue) ? filterValue.substring(1) : filterValue
+  const searchString = value.trim().toLowerCase()
+  const found = `${row[filterKey]}`.toLowerCase().indexOf(searchString) >= 0
+
+  return isFilterTypeExclude(filterValue) ? !found : found
+}
+
 export const filterAndSort = (filter, data, sortBy, sortDesc) => {
   const filterKeys = Object.keys(filter)
   const filtered = data.filter(row => {
@@ -15,10 +27,10 @@ export const filterAndSort = (filter, data, sortBy, sortDesc) => {
       }
       if (filterQuery.indexOf('&') >= 0) {
         const filterValues = filterQuery.split('&')
-        return filterValues.filter(filterValue => filterValue && `${row[filterKey]}`.toLowerCase().indexOf(filterValue.trim().toLowerCase()) >= 0).length === filterValues.length
+        return filterValues.filter(filterValue => filterValue && applyFilter(filterValue, row, filterKey)).length === filterValues.length
       } else {
         const filterValues = filterQuery.split(',')
-        return filterValues.some(filterValue => filterValue && `${row[filterKey]}`.toLowerCase().indexOf(filterValue.trim().toLowerCase()) >= 0)
+        return filterValues.some(filterValue => filterValue && applyFilter(filterValue, row, filterKey))
       }
     }).length === filterKeys.length
   })
