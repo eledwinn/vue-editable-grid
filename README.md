@@ -45,8 +45,9 @@ const columnDefs = [
 
 ```js
 {
-  columnDefs: { type: Array },
-  rowData: { type: Array },
+  columnDefs: { type: Array, required: true },
+  rowData: { type: Array, required: true },
+  rowDataKey: { type: String, required: true },
   pageCount: { type: Number, default: 0 },
   displays: { type: Array },
   itemHeight: { type: Number, default: 30 },
@@ -59,6 +60,9 @@ Define the column definition
 
 ### rowData `(array)`
 Define the grid content data
+
+### rowDataKey `{string}`
+Define the key UNIQUE value in rowData. This field is used in v-for directive.
 
 ### pageCount `(number)`
 Define how many elements per page are showed. If pageCount is `0`, grid pagination is disabled.

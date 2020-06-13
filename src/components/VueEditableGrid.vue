@@ -32,7 +32,7 @@ div.grid-container
             input(type='text' v-model='filter[column.field]' placeholder='Search with , or &' @input='filtersChanged')
       tbody(ref='body')
         div(:style=' { "min-height": `${rowDataPage.length * itemHeight}px` }')
-          tr.gridrow(v-for='(row, rowIndex) in visibleRows' :key='row.shipmentId' :style='{ "grid-template-columns": gridTemplateColumns, transform: `translateY(${(itemHeight * rowIndex) + ((itemHeight * offsetRows))}px)`, height: `${itemHeight}px` }')
+          tr.gridrow(v-for='(row, rowIndex) in visibleRows' :key='row[rowDataKey]' :style='{ "grid-template-columns": gridTemplateColumns, transform: `translateY(${(itemHeight * rowIndex) + ((itemHeight * offsetRows))}px)`, height: `${itemHeight}px` }')
             cell(
               v-for='(column, columnIndex) in columnDefs'
               :ref='`cell`'
@@ -72,8 +72,9 @@ let changePending = false
 export default {
   components: { Paginate, Cell, Filters },
   props: {
-    columnDefs: { type: Array },
-    rowData: { type: Array },
+    columnDefs: { type: Array, required: true },
+    rowData: { type: Array, required: true },
+    rowDataKey: { type: String, required: true },
     pageCount: { type: Number, default: 0 },
     displays: { type: Array },
     itemHeight: { type: Number, default: 30 },
@@ -199,6 +200,9 @@ export default {
       if (value[0] !== old[0]) {
         this.$emit('row-selected', this.getCell())
       }
+    },
+    rowData () {
+      this.renderVisibleScroll()
     }
   },
   computed: {

@@ -5,6 +5,7 @@
       ref="grid"
       :column-defs="columnDefs"
       :row-data="rows"
+      row-data-key='shipmentId'
       :displays="gridDisplays"
       @cell-updated="cellUpdated"
     ></vue-editable-grid>
