@@ -1,19 +1,23 @@
 <template lang="pug">
 div.grid-container
   .grid-tools
-    paginate.grid-tool(
-      :page='page'
-      :pages='pages'
-      :page-count='pageCount'
-      :total-rows='rowDataFiltered.length'
-      @count-changed='pageCount=$event'
-      @prev='page--'
-      @next='page++'
-    )
-    span.grid-tool(v-for='display in displays') {{ display }}
-    filters.grid-tool(:filters='filter' :columnDefs='columnDefs' @remove='removeFilter')
+    .grid-tools-left
+      slot(name='header')
+      paginate.grid-tool(
+        :page='page'
+        :pages='pages'
+        :page-count='pageCount'
+        :total-rows='rowDataFiltered.length'
+        @count-changed='pageCount=$event'
+        @prev='page--'
+        @next='page++'
+        v-if='pageCount'
+      )
+      filters.grid-tool(:filters='filter' :columnDefs='columnDefs' @remove='removeFilter')
+    .grid-tools-right
+      slot(name='header-r')
   .grid-table-container(ref='container')
-    table.grid-table(ref='table')
+    table.grid-table(ref='table' :class='{ filters: enableFilters }')
       thead(ref='head')
         tr(:style='{ "grid-template-columns": gridTemplateColumns }')
           th(
@@ -24,7 +28,7 @@ div.grid-container
           )
             | {{ column.headerName }}
             span.resize-handle(@mousedown='initResize(column, $event)' @click.stop)
-        tr(:style='{ "grid-template-columns": gridTemplateColumns }')
+        tr(:style='{ "grid-template-columns": gridTemplateColumns }' v-if='enableFilters')
           th.filter(
             v-for='(column, index) in columnDefs'
             :key='index'
@@ -75,8 +79,8 @@ export default {
     columnDefs: { type: Array, required: true },
     rowData: { type: Array, required: true },
     rowDataKey: { type: String, required: true },
+    enableFilters: { type: Boolean, default: true },
     pageCount: { type: Number, default: 0 },
-    displays: { type: Array },
     itemHeight: { type: Number, default: 30 },
     virtualScrollOffset: { type: Number, default: 3 }
   },
@@ -449,10 +453,20 @@ $tools-height: 25px;
   height: 100%;
 }
 
-.grid-tools {
+.grid-tools,
+.grid-tools-left,
+.grid-tools-right {
   height: $tools-height;
   display: flex;
   align-items: center;
+}
+
+.grid-tools {
+  justify-content: space-between;
+}
+
+.grid-tools-right {
+  justify-items: flex-end;
 }
 
 .grid-tool {
@@ -466,8 +480,12 @@ $tools-height: 25px;
 .grid-table {
   height: 100%;
   display: grid;
-  grid-template-rows: 70px auto;
+  grid-template-rows: 35px auto;
   overflow: hidden;
+
+  &.filters {
+    grid-template-rows: 70px auto;
+  }
 }
 
 thead,

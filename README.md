@@ -23,12 +23,19 @@ Now you can use it
 ```html
 <vue-editable-grid
   class="grid"
+  ref="grid"
   :column-defs="columnDefs"
-  :row-data="shipmentsFiltered"
-  :displays='gridDisplays'
+  :row-data="rows"
+  row-data-key='shipmentId'
   @cell-updated="cellUpdated"
-  @row-selected="rowSelected"
-></vue-editable-grid>
+>
+  <template v-slot:header>
+    Vue editable grid, by eledwinn
+  </template>
+  <template v-slot:header-r>
+    Total rows: {{ rows.length }}
+  </template>
+</vue-editable-grid>
 ```
 Column definition format:
 ```js
@@ -48,8 +55,8 @@ const columnDefs = [
   columnDefs: { type: Array, required: true },
   rowData: { type: Array, required: true },
   rowDataKey: { type: String, required: true },
+  enableFilters: { type: Boolean, default: true },
   pageCount: { type: Number, default: 0 },
-  displays: { type: Array },
   itemHeight: { type: Number, default: 30 },
   virtualScrollOffset: { type: Number, default: 3 }
 }
@@ -64,13 +71,15 @@ Define the grid content data
 ### rowDataKey `{string}`
 Define the key UNIQUE value in rowData. This field is used in v-for directive.
 
+### enableFilters `{boolean}`
+Enable or disable filter row
+
+Default value: `true`
+
 ### pageCount `(number)`
 Define how many elements per page are showed. If pageCount is `0`, grid pagination is disabled.
 
 Default value: `0`
-
-### displays `(srray of string)`
-Array of elements to show in grid top section like informative values.
 
 ### itemHeight `(number)`
 Height of rows in pixels.

@@ -6,9 +6,15 @@
       :column-defs="columnDefs"
       :row-data="rows"
       row-data-key='shipmentId'
-      :displays="gridDisplays"
       @cell-updated="cellUpdated"
-    ></vue-editable-grid>
+    >
+      <template v-slot:header>
+        Vue editable grid, by eledwinn
+      </template>
+      <template v-slot:header-r>
+        Total rows: {{ rows.length }}
+      </template>
+    </vue-editable-grid>
   </div>
 </template>
 
@@ -45,8 +51,7 @@ export default {
   data () {
     return {
       columnDefs: columnDefinition,
-      rows: [],
-      gridDisplays: ['Say: hello']
+      rows: []
     }
   },
   created () {
@@ -87,7 +92,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
   font-size: 14px;
   height: 400px;
 }
