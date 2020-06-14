@@ -109,6 +109,7 @@ export default {
       }
       const key = $event.key
       const isControl = $event.metaKey || $event.ctrlKey
+      const isShift = $event.shiftKey
       if (key === 'ArrowDown') {
         if (isControl) this.selectLastRow()
         else this.sumSelectionRow(1)
@@ -126,7 +127,7 @@ export default {
         else this.sumSelectionCol(-1)
         $event.preventDefault()
       } else if (key === 'Tab') {
-        this.sumSelectionCol(1)
+        this.sumSelectionCol(isShift ? -1 : 1)
         $event.preventDefault()
       } else if (key === 'Enter') {
         this.sumSelectionRow(1)
@@ -355,8 +356,6 @@ export default {
           this.cellEditing = []
           if (eventCode === 'Enter') {
             this.sumSelectionRow(1)
-          } else if (eventCode === 'Tab') {
-            this.sumSelectionCol(1)
           }
           resolve()
         }
