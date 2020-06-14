@@ -3,6 +3,7 @@ import { parse, parseISO } from 'date-fns'
 export const defaultDateTimeFormat = 'yyyy-MM-dd HH:mm:ss'
 export const defaultDateFormat = 'yyyy-MM-dd'
 export const currencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+export const percentFormatter = new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 })
 export const numericFormatter = new Intl.NumberFormat('en-US', {})
 
 export const filterAndSort = (filter, data, sortBy, sortDesc) => {
@@ -85,7 +86,7 @@ export const cellValueParser = (column, value, fromInput) => {
     }
   } else if (column.type === 'boolean') {
     value = ['y', 'yes', 'true', 't', 'si', 's', '1'].indexOf(value.toLowerCase()) >= 0
-  } else if (column.type === 'currency' || column.type === 'numeric') {
+  } else if (column.type === 'currency' || column.type === 'numeric' || column.type === 'percent') {
     const separators = currencyFormatter.format(111111.11).replace(/1/g, '').split('').reverse()
     const decimalSepparator = separators[0]
     const clearValue = +value.split('').filter(val => !isNaN(+val) || val === decimalSepparator).join('')

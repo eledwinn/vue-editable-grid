@@ -58,6 +58,7 @@ export default {
         case 'text': return 'text'
         case 'numeric': return 'number'
         case 'currency': return 'number'
+        case 'percent': return 'number'
         case 'date': return 'date'
         case 'datetime': return 'datetime-local'
       }
@@ -146,7 +147,9 @@ export default {
   }
 
   &.currency,
-  &.numeric {
+  &.numeric,
+  &.percent
+  {
     text-align: right;
   }
 

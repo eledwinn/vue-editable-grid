@@ -110,7 +110,7 @@ Key name for column in `row-data` items
 Name for column header
 
 ### type
-Data type, possible vales: `datetime`, `date`, `text`, `numeric`, `currency`, `boolean`.
+Data type, possible vales: `datetime`, `date`, `text`, `numeric`, `currency`, `boolean`, `percent`.
 
 Default: `text`
 

@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { defaultDateTimeFormat, defaultDateFormat, currencyFormatter, numericFormatter } from './helpers'
+import { defaultDateTimeFormat, defaultDateFormat, currencyFormatter, percentFormatter, numericFormatter } from './helpers'
 
 export const cellFormatter = function (value, column) {
   if (!value && value !== false && value !== 0) return ''
@@ -15,6 +15,7 @@ export const cellFormatter = function (value, column) {
     case 'boolean': return value ? 'Y' : 'N'
     case 'numeric': return numericFormatter.format(value)
     case 'currency': return currencyFormatter.format(value)
+    case 'percent': return percentFormatter.format(value)
     default: return value
   }
 }

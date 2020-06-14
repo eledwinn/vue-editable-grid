@@ -1,7 +1,7 @@
 {
   "name": "vue-editable-grid",
   "description": "Simple Vue grid with edit mode and cell navigation such as excel",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "private": false,
   "keywords": [
     "vue",

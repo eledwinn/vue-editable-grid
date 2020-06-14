@@ -39,6 +39,7 @@ const columnDefinition = [
   { sortable: true, filter: true, field: 'dateLastUpdateDat', headerName: 'Date time', type: 'datetime', format: defaultDateTimeFormat, editable: true },
   { sortable: true, filter: true, field: 'priceDatAvg', headerName: 'Numeric', type: 'numeric', editable: true },
   { sortable: true, filter: true, field: 'priceDatAvg', headerName: 'Currency', type: 'currency', editable: true },
+  { sortable: true, filter: true, field: 'priceDatAvg', headerName: 'Percent', type: 'percent', editable: true },
   { sortable: true, filter: true, field: 'dateLastUpdateDat', headerName: 'Date', type: 'date', format: defaultDateFormat, editable: true },
   { sortable: true, filter: true, field: 'isActive', headerName: 'Is active', type: 'boolean', editable: true }
 ]
