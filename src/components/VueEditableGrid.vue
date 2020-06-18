@@ -1,5 +1,5 @@
 <template lang="pug">
-div.grid-container
+div.vue-editable-grid
   .grid-tools
     .grid-tools-left
       slot(name='header')
@@ -446,7 +446,6 @@ export default {
 
 <style lang="scss" scoped>
 @import './variables';
-// .grid-container {}
 $tools-height: 25px;
 
 .scroller {

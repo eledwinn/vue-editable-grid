@@ -156,6 +156,14 @@ export default {
 ### getFormattedRows()
 Allow to get a complete row data passed in `row-data` property but with all format applied. This is very useful for example when you want to export the data.
 
+### Slots
+
+## Header slots
+
+You can use slot `header` and `header-r` to implement own features.
+
+Use only inline/inline-block elements into header for better UX.
+
 ## How to colaborate
 ```
 npm install
