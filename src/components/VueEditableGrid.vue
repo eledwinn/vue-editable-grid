@@ -58,7 +58,8 @@ div.grid-container
 </template>
 
 <script>
-import { filterAndSort, checkFocus, cellValueParser } from './helpers'
+import filterAndSort from './filter-and-sort'
+import { checkFocus, cellValueParser } from './helpers'
 import { cellFormatter } from './vue-filters'
 import { initResize } from './header-resize'
 import Paginate from './Paginate.vue'
@@ -212,7 +213,7 @@ export default {
   },
   computed: {
     rowDataFiltered () {
-      return filterAndSort(this.filter, this.rowData, this.sortByColumn, this.sortByDesc)
+      return filterAndSort(this.filter, this.rowData, this.columnDefs, this.sortByColumn, this.sortByDesc)
     },
     rowDataPage () {
       if (!this.pageCount) {
