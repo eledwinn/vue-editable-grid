@@ -515,6 +515,7 @@ tr {
 .gridrow {
   position: absolute;
   top: 0;
+  min-width: 100%;
 }
 
 th {
