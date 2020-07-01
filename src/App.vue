@@ -7,9 +7,11 @@
       :row-data="rows"
       row-data-key='shipmentId'
       @cell-updated="cellUpdated"
+      @row-selected="rowSelected"
     >
       <template v-slot:header>
         Vue editable grid, by eledwinn
+        <a href="#" @click.prevent="removeCurrentRow" v-if="selectedRow" class="ml-1">Remove current row</a>
       </template>
       <template v-slot:header-r>
         Total rows: {{ rows.length }}
@@ -52,7 +54,8 @@ export default {
   data () {
     return {
       columnDefs: columnDefinition,
-      rows: []
+      rows: [],
+      selectedRow: null
     }
   },
   created () {
@@ -81,6 +84,12 @@ export default {
     },
     cellUpdated ($event) {
       console.log($event)
+    },
+    rowSelected ($event) {
+      this.selectedRow = $event.rowData
+    },
+    removeCurrentRow () {
+      this.rows = this.rows.filter(row => row.shipmentId !== this.selectedRow.shipmentId)
     }
   }
 }
@@ -99,5 +108,9 @@ export default {
 
 .grid {
   height: 100%;
+}
+
+.ml-1 {
+  margin-left: 10px;
 }
 </style>

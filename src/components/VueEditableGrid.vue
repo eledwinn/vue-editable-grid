@@ -98,6 +98,7 @@ export default {
       page: 0,
       cellsWithErrors: {},
       gridTemplateColumns: null,
+      selectedRowKey: null,
       // virtual scroll
       offsetRows: 0,
       visibleRows: []
@@ -186,6 +187,7 @@ export default {
     checkFocus(this.$refs.container.querySelector('tbody'), focused => {
       this.focused = focused
     })
+    // TODO: use grid name to saving localstorage
     const columns = JSON.parse(localStorage.getItem('columns') || '[]')
     this.columnDefs.forEach(column => {
       const previousSize = columns.find(c => c.field === column.field)
@@ -204,10 +206,18 @@ export default {
   watch: {
     selStart (value, old) {
       if (value[0] !== old[0]) {
-        this.$emit('row-selected', this.getCell())
+        this.emitRowSelected()
       }
     },
+    rowDataPage () {
+      this.emitRowSelected()
+    },
     rowData () {
+      const [rowIndex] = this.selStart
+      const currentKey = this.rowDataPage[rowIndex] && this.rowDataPage[rowIndex][this.rowDataKey]
+      if (currentKey !== this.selectedRowKey) {
+        this.emitRowSelected()
+      }
       this.renderVisibleScroll()
     }
   },
@@ -229,6 +239,14 @@ export default {
     }
   },
   methods: {
+    emitRowSelected () {
+      const cell = this.getCell()
+      const newSelectedKey = cell.rowData && cell.rowData[this.rowDataKey]
+      if (this.selectedRowKey !== newSelectedKey) {
+        this.selectedRowKey = newSelectedKey
+        this.$emit('row-selected', cell)
+      }
+    },
     renderVisibleScroll (body) {
       if (!body) {
         body = this.$refs.body
