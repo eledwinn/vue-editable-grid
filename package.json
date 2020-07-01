@@ -1,7 +1,7 @@
 {
   "name": "vue-editable-grid",
   "description": "Simple Vue grid with edit mode and cell navigation such as excel",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": false,
   "keywords": [
     "vue",
@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "gir+https://github.com/eledwinn/vue-editable-grid.git"
+    "url": "git+https://github.com/eledwinn/vue-editable-grid.git"
   },
   "main": "./dist/VueEditableGrid.common.js",
   "scripts": {
