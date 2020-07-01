@@ -28,6 +28,8 @@ Now you can use it
   :row-data="rows"
   row-data-key='shipmentId'
   @cell-updated="cellUpdated"
+  @row-selected="rowSelected"
+  @link-clicked="linkClicked"
 >
   <template v-slot:header>
     Vue editable grid, by eledwinn
@@ -40,11 +42,14 @@ Now you can use it
 Column definition format:
 ```js
 const columnDefs = [
-  { sortable: true, filter: true, field: 'shipmentId', headerName: 'Id' },
-  { sortable: true, filter: true, field: 'datePublication', headerName: 'Date Publication', type: 'datetime', format: 'MMM dd, yyyy' },
-  { sortable: true, filter: true, field: 'typeTruckDescription', headerName: 'Truck' },
-  { sortable: true, filter: true, field: 'countryName', headerName: 'Cuty' },
-  { sortable: true, filter: true, field: 'ammount', headerName: 'Ammount', type: 'currency' }
+  { sortable: true, filter: true, field: 'eyeColor', headerName: 'Eye color', editable: true },
+  { sortable: true, filter: true, field: 'name', headerName: 'Name', editable: true },
+  { sortable: true, filter: true, field: 'registered', headerName: 'registered', type: 'date', format: 'MMM dd, yyyy', editable: true },
+  { sortable: true, filter: true, field: 'age', headerName: 'Age', type: 'numeric', editable: true },
+  { sortable: true, filter: true, field: 'balance', headerName: 'Balance', type: 'currency', editable: true },
+  { sortable: true, filter: true, field: 'happiness', headerName: 'Happiness percent', type: 'percent', editable: true },
+  { sortable: true, filter: true, field: 'isActive', headerName: 'Is active', type: 'boolean', editable: true },
+  { sortable: true, filter: true, field: 'picture', headerName: 'Picture', type: 'link', editable: false }
 ]
 ```
 
@@ -128,10 +133,40 @@ Default: `false`
 
 ### cell-updated
 Emited when cell value is changed.
-TODO: ...
+
+$event object: `{ value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess }`
+
+- value: New cell value
+- row: Row object, referenced from array setted in `row-data` property
+- column: Column object, referenced from array setted in `column-defs` property
+- rowIndex: The row index
+- columnIndex: The column index
+- $event: Original event reference
+- preventDefault: Function that allow prevent cell update
+- markAsPending: Function that allow mark as pending editing (loading status) while define if edit can be executed. Use this funcion if you need to use async processes (like server requests) in cellUpdate event handling.
+- confirm: Function that allow confirm cell editing. Is only required if you was called markAsPending.
+- markAsFailed: Function that allow mark cell when error has occurred. You can pass string parameter with error message. `$event.markAsFailed('Invalid format')`
+- markAsSuccess: Function that allow mark cell when error has fixed.
 
 ### row-selected
 Emited when row selection is changed.
+
+$event object: `{ rowData, colData, rowIndex, colIndex }`
+
+- rowData: Row object, referenced from array setted in `row-data` property.
+- colData: Column object, referenced from array setted in `column-defs` property.
+- rowIndex: The row index
+- colIndex: The column index
+
+### link-clicked
+Emited when link cell is clicked.
+
+$event object: `{ rowData, colData, rowIndex, colIndex }`
+
+- rowData: Row object, referenced from array setted in `row-data` property.
+- colData: Column object, referenced from array setted in `column-defs` property.
+- rowIndex: The row index
+- colIndex: The column index
 
 ## Methods
 

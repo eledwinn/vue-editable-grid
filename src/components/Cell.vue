@@ -17,7 +17,9 @@ td.cell(
       @focus='editPending = true'
       @blur='leaved'
     )
-  span(v-else) {{ row[column.field] | cellFormatter(column) }}
+  span(v-else)
+    a(@click.prevent='linkClicked' v-if='column.type === "link"' href='#') {{ row[column.field] | cellFormatter(column) }}
+    span(v-else) {{ row[column.field] | cellFormatter(column) }}
 </template>
 
 <script>
@@ -56,6 +58,7 @@ export default {
     inputType () {
       switch (this.column.type) {
         case 'text': return 'text'
+        case 'link': return 'text'
         case 'numeric': return 'number'
         case 'currency': return 'number'
         case 'percent': return 'number'
@@ -122,6 +125,9 @@ export default {
       if (this.editPending) {
         this.setEditableValue($event)
       }
+    },
+    linkClicked () {
+      this.$emit('link-clicked')
     }
   }
 }

@@ -53,6 +53,7 @@ div.vue-editable-grid
               @dblclick='tryEdit(row, column, offsetRows + rowIndex, columnIndex)'
               @edited='cellEdited'
               @edit-cancelled='cellEditing = []'
+              @link-clicked='linkClicked(row, column, offsetRows + rowIndex, columnIndex)'
             )
     textarea.hidde(ref='tmp')
 </template>
@@ -331,6 +332,9 @@ export default {
       if (column.editable) {
         this.cellEditing = [rowIndex, columnIndex, newValue]
       }
+    },
+    linkClicked (rowData, colData, rowIndex, colIndex, newValue) {
+      this.$emit('link-clicked', { rowData, colData, rowIndex, colIndex })
     },
     setCellError (rowIndex, columnIndex, error) {
       const cellId = `cell${rowIndex}-${columnIndex}`

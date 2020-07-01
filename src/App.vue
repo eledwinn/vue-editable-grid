@@ -5,9 +5,10 @@
       ref="grid"
       :column-defs="columnDefs"
       :row-data="rows"
-      row-data-key='shipmentId'
+      row-data-key='id'
       @cell-updated="cellUpdated"
       @row-selected="rowSelected"
+      @link-clicked="linkClicked"
     >
       <template v-slot:header>
         Vue editable grid, by eledwinn
@@ -29,21 +30,20 @@ export const defaultDateFormat = 'MMM dd, yyyy'
 export const defaultDateTimeFormat = 'MMM dd, yyyy h:mm a'
 
 const columnDefinition = [
-  { sortable: true, filter: true, field: 'shipmentId', headerName: 'Id', editable: true },
-  { sortable: true, filter: true, field: 'typeTruckDescription', headerName: 'Truck', editable: true },
-  { sortable: true, filter: true, field: 'oriCityCode', headerName: 'Origin City', editable: true },
-  { sortable: true, filter: true, field: 'desCityCode', headerName: 'Dest City', editable: true },
-  { sortable: true, filter: true, field: 'weightLoad', headerName: 'Weight', editable: true },
-  { sortable: true, filter: true, field: 'purchaseOrder', headerName: 'PO', editable: true },
-  { sortable: true, filter: true, field: 'carrierName', headerName: 'Carrier name', editable: true },
-  { sortable: true, filter: true, field: 'comment1', headerName: 'Comment 1', editable: true },
-  { sortable: true, filter: true, field: 'comment2', headerName: 'Comment 2', editable: true },
-  { sortable: true, filter: true, field: 'dateLastUpdateDat', headerName: 'Date time', type: 'datetime', format: defaultDateTimeFormat, editable: true },
-  { sortable: true, filter: true, field: 'priceDatAvg', headerName: 'Numeric', type: 'numeric', editable: true },
-  { sortable: true, filter: true, field: 'priceDatAvg', headerName: 'Currency', type: 'currency', editable: true },
-  { sortable: true, filter: true, field: 'priceDatAvg', headerName: 'Percent', type: 'percent', editable: true },
-  { sortable: true, filter: true, field: 'dateLastUpdateDat', headerName: 'Date', type: 'date', format: defaultDateFormat, editable: true },
-  { sortable: true, filter: true, field: 'isActive', headerName: 'Is active', type: 'boolean', editable: true }
+  { sortable: true, filter: true, field: 'id', headerName: 'Id', editable: true },
+  { sortable: true, filter: true, field: 'eyeColor', headerName: 'Eye color', editable: true },
+  { sortable: true, filter: true, field: 'name', headerName: 'Name', editable: true },
+  { sortable: true, filter: true, field: 'gender', headerName: 'gender', editable: true },
+  { sortable: true, filter: true, field: 'company', headerName: 'Company', editable: true },
+  { sortable: true, filter: true, field: 'email', headerName: 'Email', editable: true },
+  { sortable: true, filter: true, field: 'Phone', headerName: 'Phone', editable: true },
+  { sortable: true, filter: true, field: 'registered', headerName: 'registered', type: 'datetime', format: defaultDateTimeFormat, editable: true },
+  { sortable: true, filter: true, field: 'registered', headerName: 'registered', type: 'date', format: defaultDateTimeFormat, editable: true },
+  { sortable: true, filter: true, field: 'age', headerName: 'Age', type: 'numeric', editable: true },
+  { sortable: true, filter: true, field: 'balance', headerName: 'Balance', type: 'currency', editable: true },
+  { sortable: true, filter: true, field: 'happiness', headerName: 'Happiness percent', type: 'percent', editable: true },
+  { sortable: true, filter: true, field: 'isActive', headerName: 'Is active', type: 'boolean', editable: true },
+  { sortable: true, filter: true, field: 'picture', headerName: 'Picture', type: 'link', editable: false }
 ]
 
 export default {
@@ -66,20 +66,18 @@ export default {
   },
   methods: {
     formatData () {
-      data.forEach(shipment => {
-        this.formatRow(shipment)
+      data.forEach(row => {
+        this.formatRow(row)
       })
       this.rows = data
     },
-    formatRow (shipment) {
+    formatRow (row) {
       const red = '#ffe5e5'
       const green = '#b6f7b6'
-      const { poStatusId, priceRate, priceDatAvg } = shipment
-      const priceRateBgColor = !priceRate ? null : priceRate < priceDatAvg ? green : priceRate > priceDatAvg ? red : null
-      const purchaseOrderBgColor = poStatusId === 2 && red
-      shipment.$cellStyle = {
-        purchaseOrder: purchaseOrderBgColor && { backgroundColor: purchaseOrderBgColor },
-        priceRate: priceRateBgColor && { backgroundColor: priceRateBgColor }
+      const { happiness } = row
+      const priceRateBgColor = happiness > 0.6 ? green : red
+      row.$cellStyle = {
+        happiness: priceRateBgColor && { backgroundColor: priceRateBgColor }
       }
     },
     cellUpdated ($event) {
@@ -88,8 +86,11 @@ export default {
     rowSelected ($event) {
       this.selectedRow = $event.rowData
     },
+    linkClicked ($event) {
+      console.log($event)
+    },
     removeCurrentRow () {
-      this.rows = this.rows.filter(row => row.shipmentId !== this.selectedRow.shipmentId)
+      this.rows = this.rows.filter(row => row.id !== this.selectedRow.id)
     }
   }
 }
