@@ -6,6 +6,7 @@ td.cell(
   :style='row.$cellStyle && row.$cellStyle[column.field]'
   @click='$emit("click", $event)'
   @dblclick='$emit("dblclick", $event)'
+  @contextmenu='$emit("contextmenu", $event)'
 )
   span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
     input(
