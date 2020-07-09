@@ -77,7 +77,7 @@ Define the grid content data
 Define the key UNIQUE value in rowData. This field is used in v-for directive.
 
 ### enableFilters `{boolean}`
-Enable or disable filter row
+Enable or disable filters row
 
 Default value: `true`
 
@@ -107,6 +107,24 @@ Default: `false`
 If column can be filter
 
 Default: `false`
+
+**filter usage**
+
+  - *Normal filter* : Type the value to filter
+
+  ![normal-filter](./images/normal-filter.png)
+
+  - *Negative filter* : use ! to filter the data that does not match
+
+  ![negative-filter](./images/negative-filter.png)
+
+  - *Or filter* : Filter data that match with some of the values 
+
+  ![or-filter](./images/or-filter.png)
+
+  - *And filter* : Filter data that match with all values
+
+  ![or-filter](./images/or-filter.png)
 
 ### field
 Key name for column in `row-data` items
@@ -167,6 +185,18 @@ $event object: `{ rowData, colData, rowIndex, colIndex }`
 - colData: Column object, referenced from array setted in `column-defs` property.
 - rowIndex: The row index
 - colIndex: The column index
+
+
+### contextmenu
+Emmited when contextmenu is open
+
+$event object: `{ rowData, colData, rowIndex, colIndex }`
+
+- row: Row object, referenced from array setted in `row-data` property.
+- column: Column object, referenced from array setted in `column-defs` property.
+- rowIndex: The row index
+- colIndex: The column index
+- $event: contextmenu event
 
 ## Methods
 
