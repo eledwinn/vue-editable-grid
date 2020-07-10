@@ -1,7 +1,10 @@
 import { format } from 'date-fns'
 import { defaultDateTimeFormat, defaultDateFormat, currencyFormatter, percentFormatter, numericFormatter } from './helpers'
 
-export const cellFormatter = function (value, column) {
+export const cellFormatter = function (value, column, row) {
+  if (column.formatter) {
+    return column.formatter({ value, column, row, reverse: false })
+  }
   if (!value && value !== false && value !== 0) return ''
   switch (column.type) {
     case 'date': {

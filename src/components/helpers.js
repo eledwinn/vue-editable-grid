@@ -35,7 +35,10 @@ export const parseCellDateTime = (value, column, format) => {
   return value
 }
 
-export const cellValueParser = (column, value, fromInput) => {
+export const cellValueParser = (column, row, value, fromInput) => {
+  if (column.formatter) {
+    return column.formatter({ value, row, column, fromInput, reverse: true })
+  }
   if (!value && value !== 0 && value !== false) {
     return value
   }

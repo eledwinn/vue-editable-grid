@@ -104,7 +104,7 @@ If column can be sort
 Default: `false`
 
 ### filter
-If column can be filter
+If column can be filtered
 
 Default: `false`
 
@@ -141,6 +141,28 @@ Default: `text`
 Data column format, only apply for `date` and `datetime` column types.
 
 Refer to [date-fns format table](https://date-fns.org/v2.14.0/docs/format) for more details.
+
+## formatter
+Function that allow format the display value.
+
+Event object will be received in function as parameter with the following values:
+
+- `value: any`: Raw value 
+- `row: Object`: Row object, referenced from array setted in `row-data` property.
+- `column: Object`: Column object, referenced from array setted in `column-defs` property.
+- `fromInput (boolean)`: Indicates if the value comes from an editable input
+- `reverse (boolean)`: Indicates the direction in which to convert.
+
+```js
+const numericFormatter = event => {
+  if (event.reverse) {
+    // Convert from display to raw
+    return event.value && Number(event.value.replace(' years'))
+  }
+  // Convert from raw to display
+  return `${event.value} years`
+}
+```
 
 ### editable
 Allow to edit column values.

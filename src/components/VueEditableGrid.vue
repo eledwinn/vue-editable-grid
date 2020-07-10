@@ -29,11 +29,12 @@ div.vue-editable-grid
             | {{ column.headerName }}
             span.resize-handle(@mousedown='initResize(column, $event)' @click.stop)
         tr(:style='{ "grid-template-columns": gridTemplateColumns }' v-if='enableFilters')
-          th.filter(
+          th(
             v-for='(column, index) in columnDefs'
             :key='index'
+            :class='{ filter: column.filter }'
           )
-            input(type='text' v-model='filter[column.field]' placeholder='Search with , or &' @input='filtersChanged')
+            input(type='text' v-model='filter[column.field]' v-if='column.filter' placeholder='Search with , or &' @input='filtersChanged')
       tbody(ref='body')
         div(:style=' { "min-height": `${rowDataPage.length * itemHeight}px` }')
           tr.gridrow(v-for='(row, rowIndex) in visibleRows' :key='row[rowDataKey]' :style='{ "grid-template-columns": gridTemplateColumns, transform: `translateY(${(itemHeight * rowIndex) + ((itemHeight * offsetRows))}px)`, height: `${itemHeight}px` }')
@@ -160,7 +161,7 @@ export default {
                   columnIndex = sColIndex + cIdx
                   this.setCellError(rowIndex, columnIndex, false)
                   try {
-                    value = cellValueParser(column, value, false)
+                    value = cellValueParser(column, row, value, false)
                   } catch (error) {
                     this.setCellError(rowIndex, columnIndex, error)
                     value = null

@@ -19,8 +19,8 @@ td.cell(
       @blur='leaved'
     )
   span(v-else)
-    a(@click.prevent='linkClicked' v-if='column.type === "link"' href='#') {{ row[column.field] | cellFormatter(column) }}
-    span(v-else) {{ row[column.field] | cellFormatter(column) }}
+    a(@click.prevent='linkClicked' v-if='column.type === "link"' href='#') {{ row[column.field] | cellFormatter(column, row) }}
+    span(v-else) {{ row[column.field] | cellFormatter(column, row) }}
 </template>
 
 <script>
@@ -109,7 +109,7 @@ export default {
       return value
     },
     setEditableValue ($event) {
-      const value = cellValueParser(this.column, this.$refs.input.value, true)
+      const value = cellValueParser(this.column, this.row, this.$refs.input.value, true)
       this.editPending = false
       let valueChanged = true
       if (value === this.rowValue) valueChanged = false

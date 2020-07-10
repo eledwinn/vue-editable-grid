@@ -30,6 +30,13 @@ import data from './data'
 export const defaultDateFormat = 'MMM dd, yyyy'
 export const defaultDateTimeFormat = 'MMM dd, yyyy h:mm a'
 
+const numericFormatter = event => {
+  if (event.reverse) {
+    return event.value && +event.value.replace(' years')
+  }
+  return `${event.value} years`
+}
+
 const columnDefinition = [
   { sortable: true, filter: true, field: 'id', headerName: 'Id', editable: true },
   { sortable: true, filter: true, field: 'eyeColor', headerName: 'Eye color', editable: true },
@@ -41,10 +48,11 @@ const columnDefinition = [
   { sortable: true, filter: true, field: 'registered', headerName: 'registered', type: 'datetime', format: defaultDateTimeFormat, editable: true },
   { sortable: true, filter: true, field: 'registered', headerName: 'registered', type: 'date', format: defaultDateTimeFormat, editable: true },
   { sortable: true, filter: true, field: 'age', headerName: 'Age', type: 'numeric', editable: true },
+  { sortable: true, filter: true, field: 'age', headerName: 'Age Formatted', type: 'numeric', editable: true, formatter: numericFormatter },
   { sortable: true, filter: true, field: 'balance', headerName: 'Balance', type: 'currency', editable: true },
   { sortable: true, filter: true, field: 'happiness', headerName: 'Happiness percent', type: 'percent', editable: true },
   { sortable: true, filter: true, field: 'isActive', headerName: 'Is active', type: 'boolean', editable: true },
-  { sortable: true, filter: true, field: 'picture', headerName: 'Picture', type: 'link', editable: false }
+  { sortable: true, filter: false, field: 'picture', headerName: 'Picture', type: 'link', editable: false }
 ]
 
 export default {
