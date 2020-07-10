@@ -54,6 +54,7 @@ div.vue-editable-grid
               @edited='cellEdited'
               @edit-cancelled='cellEditing = []'
               @link-clicked='linkClicked(row, column, offsetRows + rowIndex, columnIndex)'
+              @contextmenu='contextMenu(row, column, rowIndex, columnIndex, $event)'
             )
     textarea.hidde(ref='tmp')
 </template>
@@ -335,6 +336,9 @@ export default {
     },
     linkClicked (rowData, colData, rowIndex, colIndex, newValue) {
       this.$emit('link-clicked', { rowData, colData, rowIndex, colIndex })
+    },
+    contextMenu (row, column, rowIndex, columnIndex, $event) {
+      this.$emit('context-menu', { row, column, rowIndex, columnIndex, $event })
     },
     setCellError (rowIndex, columnIndex, error) {
       const cellId = `cell${rowIndex}-${columnIndex}`

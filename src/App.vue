@@ -9,6 +9,7 @@
       @cell-updated="cellUpdated"
       @row-selected="rowSelected"
       @link-clicked="linkClicked"
+      @context-menu="contextMenu"
     >
       <template v-slot:header>
         Vue editable grid, by eledwinn
@@ -91,6 +92,9 @@ export default {
     },
     removeCurrentRow () {
       this.rows = this.rows.filter(row => row.id !== this.selectedRow.id)
+    },
+    contextMenu ($event) {
+      console.log($event)
     }
   }
 }
