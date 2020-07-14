@@ -91,7 +91,7 @@ export default {
     pageCount: { type: Number, default: 0 },
     itemHeight: { type: Number, default: 30 },
     virtualScrollOffset: { type: Number, default: 3 },
-    onlyBorder: { type: Boolean, default: false }
+    onlyBorder: { type: Boolean, default: true }
   },
   data () {
     return {
@@ -495,12 +495,12 @@ export default {
     },
     onSelection (rowIndex, colIndex, e) {
       if (this.isSelecting) {
-        if (rowIndex < this.selStartSelection[0] || colIndex < this.selStartSelection[0]) {
-          this.selStart = [rowIndex, colIndex]
-          this.selEnd = this.selStartSelection
+        if (rowIndex < this.selStartSelection[0]) {
+          this.selStart = colIndex < this.selStartSelection[1] ? [rowIndex, colIndex] : [rowIndex, this.selStartSelection[1]]
+          this.selEnd = colIndex < this.selStartSelection[1] ? this.selStartSelection : [this.selStartSelection[0], colIndex]
         } else {
-          this.selStart = this.selStartSelection
-          this.selEnd = [rowIndex, colIndex]
+          this.selStart = colIndex < this.selStartSelection[1] ? [this.selStartSelection[0], colIndex] : this.selStartSelection
+          this.selEnd = colIndex < this.selStartSelection[1] ? [rowIndex, this.selStartSelection[1]] : [rowIndex, colIndex]
         }
       }
     },

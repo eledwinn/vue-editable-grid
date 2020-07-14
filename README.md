@@ -203,8 +203,8 @@ $event object: `{ rowData, colData, rowIndex, colIndex }`
 Select and copy multiple cells in the grid
 
 Use the onlyBorder prop to select the style of the selections:
-- `false` (default) select all borders 
-- `true` just the outline
+- `true` (default) just the outline
+- `false` select all borders 
 
 ### link-clicked
 Emited when link cell is clicked.
