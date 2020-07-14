@@ -670,7 +670,7 @@ th {
   bottom: 0;
   // background: black;
   opacity: 0;
-  width: 5px;
+  width: 10px;
   cursor: col-resize;
   z-index: 1;
 }
