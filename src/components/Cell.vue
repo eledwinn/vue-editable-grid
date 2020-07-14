@@ -1,12 +1,15 @@
 <template lang="pug">
-td.cell(
+td.cell.noselect(
   :id='`cell${rowIndex}-${columnIndex}`'
-  :class='{ selected, editable, invalid, [column.type || "text"]: true }'
+  :class='{ selected: !onlyBorder && selected, "selected-top": selectedTop, "selected-right": selectedRight, "selected-bottom": selectedBottom, "selected-left": selectedLeft, editable, invalid, [column.type || "text"]: true }'
   :title='invalid'
   :style='row.$cellStyle && row.$cellStyle[column.field]'
   @click='$emit("click", $event)'
   @dblclick='$emit("dblclick", $event)'
   @contextmenu='$emit("contextmenu", $event)'
+  @mousedown='$emit("mousedown", $event)'
+  @mouseover='$emit("mouseover", $event)'
+  @mouseup='$emit("mouseup", $event)'
 )
   span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
     input(
@@ -41,7 +44,8 @@ export default {
     selStart: { type: Array },
     selEnd: { type: Array },
     cellEditing: { type: Array },
-    cellsWithErrors: { type: Object }
+    cellsWithErrors: { type: Object },
+    onlyBorder: { type: Boolean }
   },
   data () {
     return { value: null, rowValue: null, editPending: false }
@@ -49,6 +53,18 @@ export default {
   computed: {
     selected () {
       return this.rowIndex >= this.selStart[0] && this.rowIndex <= this.selEnd[0] && this.columnIndex >= this.selStart[1] && this.columnIndex <= this.selEnd[1]
+    },
+    selectedTop () {
+      return this.rowIndex === this.selStart[0] && this.columnIndex >= this.selStart[1] && this.columnIndex <= this.selEnd[1]
+    },
+    selectedRight () {
+      return this.columnIndex === this.selEnd[1] && this.rowIndex >= this.selStart[0] && this.rowIndex <= this.selEnd[0]
+    },
+    selectedBottom () {
+      return this.rowIndex === this.selEnd[0] && this.columnIndex >= this.selStart[1] && this.columnIndex <= this.selEnd[1]
+    },
+    selectedLeft () {
+      return this.columnIndex === this.selStart[1] && this.rowIndex >= this.selStart[0] && this.rowIndex <= this.selEnd[0]
     },
     editable () {
       return this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex
@@ -153,6 +169,22 @@ export default {
     border-color: $cell-selected-border-color;
   }
 
+  &.selected-top {
+    border-top-color: $cell-selected-border-color;
+  }
+
+  &.selected-right {
+    border-right-color: $cell-selected-border-color;
+  }
+
+  &.selected-bottom {
+    border-bottom-color: $cell-selected-border-color;
+  }
+
+  &.selected-left {
+    border-left-color: $cell-selected-border-color;
+  }
+
   &.currency,
   &.numeric,
   &.percent
@@ -195,5 +227,14 @@ export default {
       }
     }
   }
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 </style>

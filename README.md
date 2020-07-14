@@ -124,7 +124,7 @@ Default: `false`
 
   - *And filter* : Filter data that match with all values
 
-  ![or-filter](./images/or-filter.png)
+  ![and-filter](./images/or-filter.png)
 
 ### field
 Key name for column in `row-data` items
@@ -197,6 +197,14 @@ $event object: `{ rowData, colData, rowIndex, colIndex }`
 - colData: Column object, referenced from array setted in `column-defs` property.
 - rowIndex: The row index
 - colIndex: The column index
+
+### Multicell selection
+
+Select and copy multiple cells in the grid
+
+Use the onlyBorder prop to select the style of the selections:
+- `false` (default) select all borders 
+- `true` just the outline
 
 ### link-clicked
 Emited when link cell is clicked.
