@@ -262,7 +262,7 @@ export default {
   },
   methods: {
     emitRowSelected () {
-      if (this.selStart[0] === this.selEnd[0] && this.selStart[1] === this.selEnd[1]) {
+      if ((this.selStart[0] === this.selEnd[0] && this.selStart[1] === this.selEnd[1]) && !this.isSelecting) {
         const cell = this.getCell()
         const newSelectedKey = cell.rowData && cell.rowData[this.rowDataKey]
         if (this.selectedRowKey !== newSelectedKey) {
@@ -365,6 +365,7 @@ export default {
       this.$emit('link-clicked', { rowData, colData, rowIndex, colIndex })
     },
     contextMenu (row, column, rowIndex, columnIndex, $event) {
+      this.isSelecting = false
       this.selectCell(this.offsetRows + rowIndex, columnIndex, $event)
       this.$emit('context-menu', { row, column, rowIndex, columnIndex, $event })
     },
