@@ -262,11 +262,15 @@ export default {
   },
   methods: {
     emitRowSelected () {
-      const cell = this.getCell()
-      const newSelectedKey = cell.rowData && cell.rowData[this.rowDataKey]
-      if (this.selectedRowKey !== newSelectedKey) {
-        this.selectedRowKey = newSelectedKey
-        this.$emit('row-selected', cell)
+      if (this.selStart[0] === this.selEnd[0] && this.selStart[1] === this.selEnd[1]) {
+        const cell = this.getCell()
+        const newSelectedKey = cell.rowData && cell.rowData[this.rowDataKey]
+        if (this.selectedRowKey !== newSelectedKey) {
+          this.selectedRowKey = newSelectedKey
+          this.$emit('row-selected', cell)
+        }
+      } else {
+        this.$emit('row-selected', { rowData: null })
       }
     },
     renderVisibleScroll (body) {
