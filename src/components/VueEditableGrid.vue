@@ -58,7 +58,7 @@ div.vue-editable-grid
               @link-clicked='linkClicked(row, column, offsetRows + rowIndex, columnIndex)'
               @contextmenu='contextMenu(row, column, rowIndex, columnIndex, $event)'
               @mousedown='startSelection(offsetRows + rowIndex, columnIndex, $event)'
-              @mouseover='onSelection(offsetRows + rowIndex, columnIndex, $event)'
+              @mouseover='onSelection(offsetRows + rowIndex, columnIndex)'
               @mouseup='stopSelection'
             )
     textarea.hidde(ref='tmp')
@@ -361,6 +361,7 @@ export default {
       this.$emit('link-clicked', { rowData, colData, rowIndex, colIndex })
     },
     contextMenu (row, column, rowIndex, columnIndex, $event) {
+      this.selectCell(this.offsetRows + rowIndex, columnIndex, $event)
       this.$emit('context-menu', { row, column, rowIndex, columnIndex, $event })
     },
     setCellError (rowIndex, columnIndex, error) {
@@ -493,7 +494,7 @@ export default {
       this.isSelecting = true
       this.selStartSelection = [rowIndex, colIndex]
     },
-    onSelection (rowIndex, colIndex, e) {
+    onSelection (rowIndex, colIndex) {
       if (this.isSelecting) {
         if (rowIndex < this.selStartSelection[0]) {
           this.selStart = colIndex < this.selStartSelection[1] ? [rowIndex, colIndex] : [rowIndex, this.selStartSelection[1]]
