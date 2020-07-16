@@ -231,6 +231,9 @@ export default {
         this.emitRowSelected()
       }
     },
+    selEnd () {
+      this.emitRowSelected()
+    },
     rowDataPage () {
       this.emitRowSelected()
     },
@@ -262,13 +265,9 @@ export default {
   },
   methods: {
     emitRowSelected () {
-      if ((this.selStart[0] === this.selEnd[0] && this.selStart[1] === this.selEnd[1]) && !this.isSelecting) {
+      if ((this.selStart[0] === this.selEnd[0] && this.selStart[1] === this.selEnd[1])) {
         const cell = this.getCell()
-        const newSelectedKey = cell.rowData && cell.rowData[this.rowDataKey]
-        if (this.selectedRowKey !== newSelectedKey) {
-          this.selectedRowKey = newSelectedKey
-          this.$emit('row-selected', cell)
-        }
+        this.$emit('row-selected', cell)
       } else {
         this.$emit('row-selected', { rowData: null })
       }
@@ -366,7 +365,8 @@ export default {
     },
     contextMenu (row, column, rowIndex, columnIndex, $event) {
       this.isSelecting = false
-      this.selectCell(this.offsetRows + rowIndex, columnIndex, $event)
+      const isInside = rowIndex >= this.selStart[0] && rowIndex <= this.selEnd[0] && columnIndex >= this.selStart[1] && columnIndex <= this.selEnd[1]
+      if (!isInside) this.selectCell(this.offsetRows + rowIndex, columnIndex, $event)
       this.$emit('context-menu', { row, column, rowIndex, columnIndex, $event })
     },
     setCellError (rowIndex, columnIndex, error) {
