@@ -50,12 +50,16 @@ div.vue-editable-grid
               :selEnd='selEnd'
               :cellEditing='cellEditing'
               :cellsWithErrors='cellsWithErrors'
+              :onlyBorder='onlyBorder'
               @click='selectCell(offsetRows + rowIndex, columnIndex, $event)'
               @dblclick='tryEdit(row, column, offsetRows + rowIndex, columnIndex)'
               @edited='cellEdited'
               @edit-cancelled='cellEditing = []'
               @link-clicked='linkClicked(row, column, offsetRows + rowIndex, columnIndex)'
               @contextmenu='contextMenu(row, column, rowIndex, columnIndex, $event)'
+              @mousedown='startSelection(offsetRows + rowIndex, columnIndex, $event)'
+              @mouseover='onSelection(offsetRows + rowIndex, columnIndex)'
+              @mouseup='stopSelection'
             )
     textarea.hidde(ref='tmp')
 </template>
@@ -86,7 +90,8 @@ export default {
     enableFilters: { type: Boolean, default: true },
     pageCount: { type: Number, default: 0 },
     itemHeight: { type: Number, default: 30 },
-    virtualScrollOffset: { type: Number, default: 3 }
+    virtualScrollOffset: { type: Number, default: 3 },
+    onlyBorder: { type: Boolean, default: true }
   },
   data () {
     return {
@@ -104,7 +109,9 @@ export default {
       selectedRowKey: null,
       // virtual scroll
       offsetRows: 0,
-      visibleRows: []
+      visibleRows: [],
+      isSelecting: false,
+      selStartSelection: []
     }
   },
   created () {
@@ -177,8 +184,17 @@ export default {
           }
         }, 100)
       } else if (isControl && (key === 'c' || key === 'x')) {
-        const { colData, rowData } = this.getCell()
-        const value = rowData[colData.field]
+        const [rowStart, columnStart] = this.selStart
+        const [rowEnd, columnEnd] = this.selEnd
+
+        let value = ''
+        for (let row = rowStart; row <= rowEnd; row++) {
+          for (let column = columnStart; column <= columnEnd; column++) {
+            const { colData, rowData } = this.getCellByRef(row, column)
+            const cellValue = rowData[colData.field]
+            value = column === columnEnd ? `${value}${cellValue}\n` : `${value}${cellValue}\t`
+          }
+        }
         this.$refs.tmp.value = value || ''
         this.$refs.tmp.select()
         document.execCommand('copy')
@@ -215,6 +231,9 @@ export default {
         this.emitRowSelected()
       }
     },
+    selEnd () {
+      this.emitRowSelected()
+    },
     rowDataPage () {
       this.emitRowSelected()
     },
@@ -246,11 +265,11 @@ export default {
   },
   methods: {
     emitRowSelected () {
-      const cell = this.getCell()
-      const newSelectedKey = cell.rowData && cell.rowData[this.rowDataKey]
-      if (this.selectedRowKey !== newSelectedKey) {
-        this.selectedRowKey = newSelectedKey
+      if ((this.selStart[0] === this.selEnd[0] && this.selStart[1] === this.selEnd[1])) {
+        const cell = this.getCell()
         this.$emit('row-selected', cell)
+      } else {
+        this.$emit('row-selected', { rowData: null })
       }
     },
     renderVisibleScroll (body) {
@@ -274,8 +293,11 @@ export default {
     },
     getCell () {
       const [rowIndex, colIndex] = this.selStart
-      const colData = this.columnDefs[this.selStart[1]]
-      const rowData = this.rowDataFiltered[this.selStart[0]]
+      return this.getCellByRef(rowIndex, colIndex)
+    },
+    getCellByRef (rowIndex, colIndex) {
+      const colData = this.columnDefs[colIndex]
+      const rowData = this.rowDataFiltered[rowIndex]
       return { rowData, colData, rowIndex, colIndex }
     },
     async selectCell (rowIndex, colIndex, $event) {
@@ -342,6 +364,9 @@ export default {
       this.$emit('link-clicked', { rowData, colData, rowIndex, colIndex })
     },
     contextMenu (row, column, rowIndex, columnIndex, $event) {
+      this.isSelecting = false
+      const isInside = rowIndex >= this.selStart[0] && rowIndex <= this.selEnd[0] && columnIndex >= this.selStart[1] && columnIndex <= this.selEnd[1]
+      if (!isInside) this.selectCell(this.offsetRows + rowIndex, columnIndex, $event)
       this.$emit('context-menu', { row, column, rowIndex, columnIndex, $event })
     },
     setCellError (rowIndex, columnIndex, error) {
@@ -469,6 +494,24 @@ export default {
           return rowFormatted
         }, {})
       })
+    },
+    startSelection (rowIndex, colIndex, e) {
+      this.isSelecting = true
+      this.selStartSelection = [rowIndex, colIndex]
+    },
+    onSelection (rowIndex, colIndex) {
+      if (this.isSelecting) {
+        if (rowIndex < this.selStartSelection[0]) {
+          this.selStart = colIndex < this.selStartSelection[1] ? [rowIndex, colIndex] : [rowIndex, this.selStartSelection[1]]
+          this.selEnd = colIndex < this.selStartSelection[1] ? this.selStartSelection : [this.selStartSelection[0], colIndex]
+        } else {
+          this.selStart = colIndex < this.selStartSelection[1] ? [this.selStartSelection[0], colIndex] : this.selStartSelection
+          this.selEnd = colIndex < this.selStartSelection[1] ? [rowIndex, this.selStartSelection[1]] : [rowIndex, colIndex]
+        }
+      }
+    },
+    stopSelection () {
+      this.isSelecting = false
     }
   }
 }
@@ -633,7 +676,7 @@ th {
   bottom: 0;
   // background: black;
   opacity: 0;
-  width: 5px;
+  width: 10px;
   cursor: col-resize;
   z-index: 1;
 }
