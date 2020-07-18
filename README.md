@@ -21,23 +21,25 @@ Vue.component('vue-editable-grid', VueEditableGrid)
 
 Now you can use it
 ```html
-<vue-editable-grid
-  class="grid"
-  ref="grid"
-  :column-defs="columnDefs"
-  :row-data="rows"
-  row-data-key='shipmentId'
-  @cell-updated="cellUpdated"
-  @row-selected="rowSelected"
-  @link-clicked="linkClicked"
->
-  <template v-slot:header>
-    Vue editable grid, by eledwinn
-  </template>
-  <template v-slot:header-r>
-    Total rows: {{ rows.length }}
-  </template>
-</vue-editable-grid>
+<div style="height: 400px;"> <!-- The parent height is required -->
+  <vue-editable-grid
+    class="grid"
+    ref="grid"
+    :column-defs="columnDefs"
+    :row-data="rows"
+    row-data-key='shipmentId'
+    @cell-updated="cellUpdated"
+    @row-selected="rowSelected"
+    @link-clicked="linkClicked"
+  >
+    <template v-slot:header>
+      Vue editable grid, by eledwinn
+    </template>
+    <template v-slot:header-r>
+      Total rows: {{ rows.length }}
+    </template>
+  </vue-editable-grid>
+</div>
 ```
 Column definition format:
 ```js
