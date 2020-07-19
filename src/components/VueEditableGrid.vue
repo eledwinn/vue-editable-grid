@@ -19,16 +19,16 @@ div.vue-editable-grid
   .grid-table-container(ref='container')
     table.grid-table(ref='table' :class='{ filters: enableFilters }')
       thead(ref='head')
-        tr(:style='{ "grid-template-columns": gridTemplateColumns }')
+        tr.headers-row(:style='{ "grid-template-columns": gridTemplateColumns }')
           th(
             v-for='(column, index) in columnDefs'
             :key='index'
             :class='{ sortable: column.sortable, sorting: column.field === sortByColumn, descending: sortByDesc }'
             @click='sort(column)'
           )
-            | {{ column.headerName }}
+            span.header-content {{ column.headerName }}
             span.resize-handle(@mousedown='initResize(column, $event)' @click.stop)
-        tr(:style='{ "grid-template-columns": gridTemplateColumns }' v-if='enableFilters')
+        tr.filters-row(:style='{ "grid-template-columns": gridTemplateColumns }' v-if='enableFilters')
           th(
             v-for='(column, index) in columnDefs'
             :key='index'
@@ -519,6 +519,7 @@ export default {
 
 <style lang="scss" scoped>
 @import './variables';
+
 $tools-height: 25px;
 
 .scroller {
@@ -555,8 +556,17 @@ $tools-height: 25px;
   grid-template-rows: 35px auto;
   overflow: hidden;
 
+  .headers-row {
+    height: 100%;
+  }
+
   &.filters {
     grid-template-rows: 70px auto;
+
+    .headers-row,
+    .filters-row {
+      height: 50%;
+    }
   }
 }
 
@@ -583,6 +593,7 @@ thead.resizing th {
 
 tr {
   display: grid;
+  height: 100%;
 }
 
 .gridrow {
@@ -592,11 +603,16 @@ tr {
 }
 
 th {
-  padding: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  position: sticky;
+  padding: 0 $cell-side-paddings;
+  display: flex;
+  align-items: center;
+
+  .header-content {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+  }
 }
 
 th {

@@ -3,7 +3,7 @@ td.cell.noselect(
   :id='`cell${rowIndex}-${columnIndex}`'
   :class='{ selected: !onlyBorder && selected, "selected-top": selectedTop, "selected-right": selectedRight, "selected-bottom": selectedBottom, "selected-left": selectedLeft, editable, invalid, [column.type || "text"]: true }'
   :title='invalid'
-  :style='row.$cellStyle && row.$cellStyle[column.field]'
+  :style='cellStyle'
   @click='$emit("click", $event)'
   @dblclick='$emit("dblclick", $event)'
   @contextmenu='$emit("contextmenu", $event)'
@@ -21,7 +21,7 @@ td.cell.noselect(
       @focus='editPending = true'
       @blur='leaved'
     )
-  span(v-else)
+  span.cell-content(v-else)
     a(@click.prevent='linkClicked' v-if='column.type === "link"' href='#') {{ row[column.field] | cellFormatter(column, row) }}
     span(v-else) {{ row[column.field] | cellFormatter(column, row) }}
 </template>
@@ -83,6 +83,10 @@ export default {
         case 'datetime': return 'datetime-local'
       }
       return 'text'
+    },
+    cellStyle () {
+      const cellStyle = this.row.$cellStyle && this.row.$cellStyle[this.column.field]
+      return { ...this.row.$rowStyle, ...cellStyle }
     }
   },
   watch: {
@@ -154,11 +158,10 @@ export default {
 @import './variables';
 
 .cell {
-  padding: $cell-updown-paddings $cell-side-paddings;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  padding: 0 $cell-side-paddings;
   position: relative;
+  display: flex;
+  align-items: center;
 
   border: solid 1px transparent;
   border-bottom-color: $cell-border-color;
@@ -208,6 +211,13 @@ export default {
       font-weight: bold;
       font-size: 20px;
     }
+  }
+
+  .cell-content {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
   }
 
   .editable-field {

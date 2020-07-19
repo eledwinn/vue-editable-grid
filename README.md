@@ -65,7 +65,8 @@ const columnDefs = [
   enableFilters: { type: Boolean, default: true },
   pageCount: { type: Number, default: 0 },
   itemHeight: { type: Number, default: 30 },
-  virtualScrollOffset: { type: Number, default: 3 }
+  virtualScrollOffset: { type: Number, default: 3 },
+  onlyBorder: { type: Boolean, default: true }
 }
 ```
 
@@ -97,6 +98,14 @@ default value: `30`
 How many elements (rows) are rendered outside grid visible scroll.
 
 default value: `3`
+
+### Multicell selection
+
+Select and copy multiple cells in the grid
+
+Use the onlyBorder prop to select the style of the selections:
+- `true` (default) just the outline
+- `false` select all borders 
 
 ## Column definition reference
 
@@ -144,7 +153,7 @@ Data column format, only apply for `date` and `datetime` column types.
 
 Refer to [date-fns format table](https://date-fns.org/v2.14.0/docs/format) for more details.
 
-## formatter
+### formatter
 Function that allow format the display value.
 
 Event object will be received in function as parameter with the following values:
@@ -200,14 +209,6 @@ $event object: `{ rowData, colData, rowIndex, colIndex }`
 - rowIndex: The row index
 - colIndex: The column index
 
-### Multicell selection
-
-Select and copy multiple cells in the grid
-
-Use the onlyBorder prop to select the style of the selections:
-- `true` (default) just the outline
-- `false` select all borders 
-
 ### link-clicked
 Emited when link cell is clicked.
 
@@ -260,6 +261,23 @@ Allow to get a complete row data passed in `row-data` property but with all form
 You can use slot `header` and `header-r` to implement own features.
 
 Use only inline/inline-block elements into header for better UX.
+
+## Format rows and cell
+
+You can format cells and rows using the `row-data` prop.
+
+Attach `$cellStyle` or `$cellStyle` objects in each item of `row-data` to format it.
+
+```js
+// apply format to all row
+$rowStyle = { backgroundColor: 'black', color: '#fff' }
+
+// apply format to field1 and field2 cells in specific row
+$cellStyle = {
+  field1: { backgroundColor: 'black', color: '#fff' },
+  field2: { color: 'rgb(0, 0, 0)' }
+}
+```
 
 ## How to colaborate
 ```

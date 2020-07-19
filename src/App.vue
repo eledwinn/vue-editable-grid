@@ -88,6 +88,9 @@ export default {
       row.$cellStyle = {
         happiness: priceRateBgColor && { backgroundColor: priceRateBgColor }
       }
+      if (row.eyeColor === 'blue') {
+        row.$rowStyle = { color: 'blue' }
+      }
     },
     cellUpdated ($event) {
       console.log($event)
