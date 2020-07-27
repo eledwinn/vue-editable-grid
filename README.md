@@ -21,26 +21,32 @@ Vue.component('vue-editable-grid', VueEditableGrid)
 
 Now you can use it
 ```html
-<div style="height: 400px;"> <!-- The parent height is required -->
-  <vue-editable-grid
-    class="grid"
-    ref="grid"
-    :column-defs="columnDefs"
-    :row-data="rows"
-    row-data-key='shipmentId'
-    @cell-updated="cellUpdated"
-    @row-selected="rowSelected"
-    @link-clicked="linkClicked"
-  >
-    <template v-slot:header>
-      Vue editable grid, by eledwinn
-    </template>
-    <template v-slot:header-r>
-      Total rows: {{ rows.length }}
-    </template>
-  </vue-editable-grid>
-</div>
+<vue-editable-grid
+  class="my-grid-class"
+  ref="grid"
+  id="mygrid"
+  :column-defs="columnDefs"
+  :row-data="rows"
+  row-data-key='shipmentId'
+  @cell-updated="cellUpdated"
+  @row-selected="rowSelected"
+  @link-clicked="linkClicked"
+>
+  <template v-slot:header>
+    Vue editable grid, by eledwinn
+  </template>
+  <template v-slot:header-r>
+    Total rows: {{ rows.length }}
+  </template>
+</vue-editable-grid>
 ```
+In your stylesheet:
+```css
+.my-grid-class {
+  height: 400px;
+}
+```
+
 Column definition format:
 ```js
 const columnDefs = [
@@ -59,6 +65,7 @@ const columnDefs = [
 
 ```js
 {
+  id: { type: String, required: true },
   columnDefs: { type: Array, required: true },
   rowData: { type: Array, required: true },
   rowDataKey: { type: String, required: true },
@@ -69,6 +76,8 @@ const columnDefs = [
   onlyBorder: { type: Boolean, default: true }
 }
 ```
+### id `(String)`
+Allow to identify the grid for saving some values in local storage
 
 ### columnDefs `(array)`
 Define the column definition

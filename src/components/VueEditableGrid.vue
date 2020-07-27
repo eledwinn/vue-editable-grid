@@ -84,6 +84,7 @@ let changePending = false
 export default {
   components: { Paginate, Cell, Filters },
   props: {
+    id: { type: String, required: true },
     columnDefs: { type: Array, required: true },
     rowData: { type: Array, required: true },
     rowDataKey: { type: String, required: true },
@@ -210,7 +211,7 @@ export default {
       this.focused = focused
     })
     // TODO: use grid name to saving localstorage
-    const columns = JSON.parse(localStorage.getItem('columns') || '[]')
+    const columns = JSON.parse(localStorage.getItem(`${this.id}_columns`) || '[]')
     this.columnDefs.forEach(column => {
       const previousSize = columns.find(c => c.field === column.field)
       column.size = (previousSize && previousSize.size) || column.size
@@ -454,7 +455,7 @@ export default {
         column.size = Math.max(30, width) + 'px'
         this.setGridColumnTemplate()
       }, () => {
-        localStorage.setItem('columns', JSON.stringify(this.columnDefsFiltered.map(({ field, size }) => ({ field, size }))))
+        localStorage.setItem(`${this.id}_columns`, JSON.stringify(this.columnDefsFiltered.map(({ field, size }) => ({ field, size }))))
       })
     },
     selectFirstCol () {

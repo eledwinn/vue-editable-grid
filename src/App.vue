@@ -3,6 +3,7 @@
     <vue-editable-grid
       class="grid"
       ref="grid"
+      id="mygrid"
       :column-defs="columnDefs"
       :row-data="rows"
       row-data-key='id'
