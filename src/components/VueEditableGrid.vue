@@ -185,20 +185,8 @@ export default {
           }
         }, 100)
       } else if (isControl && (key === 'c' || key === 'x')) {
-        const [rowStart, columnStart] = this.selStart
-        const [rowEnd, columnEnd] = this.selEnd
-
-        let value = ''
-        for (let row = rowStart; row <= rowEnd; row++) {
-          for (let column = columnStart; column <= columnEnd; column++) {
-            const { colData, rowData } = this.getCellByRef(row, column)
-            const cellValue = rowData[colData.field]
-            value = column === columnEnd ? `${value}${cellValue}\n` : `${value}${cellValue}\t`
-          }
-        }
-        this.$refs.tmp.value = value || ''
-        this.$refs.tmp.select()
-        document.execCommand('copy')
+        if (isShift) $event.preventDefault()
+        this.copyToClipboard(isShift)
       } else if (!$event.metaKey && this.selStart[0] >= 0 && isWriteableKey($event.keyCode)) {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
         $event.preventDefault()
@@ -513,6 +501,21 @@ export default {
     },
     stopSelection () {
       this.isSelecting = false
+    },
+    copyToClipboard (withHeaders) {
+      const [rowStart, columnStart] = this.selStart
+      const [rowEnd, columnEnd] = this.selEnd
+      let value = withHeaders ? this.columnDefs.filter((_, index) => index >= columnStart && index <= columnEnd).map(col => col.headerName).join('\t') + '\n' : ''
+      for (let row = rowStart; row <= rowEnd; row++) {
+        for (let column = columnStart; column <= columnEnd; column++) {
+          const { colData, rowData } = this.getCellByRef(row, column)
+          const cellValue = cellFormatter(rowData[colData.field], colData, rowData)
+          value = column === columnEnd ? `${value}${cellValue}\n` : `${value}${cellValue}\t`
+        }
+      }
+      this.$refs.tmp.value = value || ''
+      this.$refs.tmp.select()
+      document.execCommand('copy')
     }
   }
 }
