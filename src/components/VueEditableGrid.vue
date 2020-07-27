@@ -148,7 +148,7 @@ export default {
       } else if (key === 'F2') {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
         this.tryEdit(rowData, colData, rowIndex, colIndex)
-      } else if (key === 'v' && isControl) {
+      } else if (key.toLowerCase() === 'v' && isControl) {
         this.$refs.tmp.value = ''
         this.$refs.tmp.focus()
         setTimeout(() => {
@@ -184,7 +184,7 @@ export default {
             this.selEnd = [rowIndex, columnIndex]
           }
         }, 100)
-      } else if (isControl && (key === 'c' || key === 'x')) {
+      } else if (isControl && (key.toLowerCase() === 'c' || key.toLowerCase() === 'x')) {
         if (isShift) $event.preventDefault()
         this.copyToClipboard(isShift)
       } else if (!$event.metaKey && this.selStart[0] >= 0 && isWriteableKey($event.keyCode)) {
