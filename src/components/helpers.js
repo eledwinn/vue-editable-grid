@@ -63,7 +63,7 @@ export const cellValueParser = (column, row, value, fromInput) => {
     const separators = currencyFormatter.format(111111.11).replace(/1/g, '').split('').reverse()
     const decimalSepparator = separators[0]
     const clearValue = +value.split('').filter(val => !isNaN(+val) || val === decimalSepparator).join('')
-    value = clearValue
+    value = value.startsWith('-') ? clearValue * -1 : clearValue
   }
   if (isNaN(value)) {
     throw new Error('Invalid value')
