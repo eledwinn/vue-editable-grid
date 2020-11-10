@@ -145,6 +145,9 @@ export default {
       } else if (key === 'Enter') {
         this.sumSelectionRow(1)
         $event.preventDefault()
+      } else if (key === 'Delete') {
+        const { colData, rowData, rowIndex, colIndex } = this.getCell()
+        this.setEditableValue(rowData, colData, rowIndex, colIndex, null, true, null)
       } else if (key === 'F2') {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
         this.tryEdit(rowData, colData, rowIndex, colIndex)
