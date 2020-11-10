@@ -199,7 +199,6 @@ export default {
       this.focused = focused
     })
     this.loadColumnsSizes()
-    this.setGridColumnTemplate()
     const body = this.$refs.body
     body.addEventListener('scroll', e => {
       requestAnimationFrame(() => {
@@ -293,6 +292,7 @@ export default {
         const previousSize = columns.find(c => c.field === column.field)
         column.size = (previousSize && previousSize.size) || column.size
       })
+      this.setGridColumnTemplate()
     },
     async selectCell (rowIndex, colIndex, $event) {
       if (changePending) {
