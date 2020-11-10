@@ -198,12 +198,7 @@ export default {
     checkFocus(this.$refs.container.querySelector('tbody'), focused => {
       this.focused = focused
     })
-    // TODO: use grid name to saving localstorage
-    const columns = JSON.parse(localStorage.getItem(`${this.id}_columns`) || '[]')
-    this.columnDefs.forEach(column => {
-      const previousSize = columns.find(c => c.field === column.field)
-      column.size = (previousSize && previousSize.size) || column.size
-    })
+    this.loadColumnsSizes()
     this.setGridColumnTemplate()
     const body = this.$refs.body
     body.addEventListener('scroll', e => {
@@ -233,6 +228,9 @@ export default {
         this.emitRowSelected()
       }
       this.renderVisibleScroll()
+    },
+    columnDefs () {
+      this.loadColumnsSizes()
     }
   },
   computed: {
@@ -288,6 +286,13 @@ export default {
       const colData = this.columnDefs[colIndex]
       const rowData = this.rowDataFiltered[rowIndex]
       return { rowData, colData, rowIndex, colIndex }
+    },
+    loadColumnsSizes () {
+      const columns = JSON.parse(localStorage.getItem(`${this.id}_columns`) || '[]')
+      this.columnDefs.forEach(column => {
+        const previousSize = columns.find(c => c.field === column.field)
+        column.size = (previousSize && previousSize.size) || column.size
+      })
     },
     async selectCell (rowIndex, colIndex, $event) {
       if (changePending) {
