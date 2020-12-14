@@ -51,8 +51,8 @@ Column definition format:
 ```js
 const columnDefs = [
   { sortable: true, filter: true, field: 'eyeColor', headerName: 'Eye color', editable: true },
-  { sortable: true, filter: true, field: 'name', headerName: 'Name', editable: true },
-  { sortable: true, filter: true, field: 'registered', headerName: 'registered', type: 'date', format: 'MMM dd, yyyy', editable: true },
+  { sortable: true, filter: true, field: 'name', headerName: 'Name', editable: true, maxlength: 30 },
+  { sortable: true, filter: true, field: 'registered', headerName: 'registered', type: 'date', format: 'MMM dd, yyyy', editable: true, min: '2020-12-01' },
   { sortable: true, filter: true, field: 'age', headerName: 'Age', type: 'numeric', editable: true },
   { sortable: true, filter: true, field: 'balance', headerName: 'Balance', type: 'currency', editable: true },
   { sortable: true, filter: true, field: 'happiness', headerName: 'Happiness percent', type: 'percent', editable: true },
@@ -188,6 +188,27 @@ const numericFormatter = event => {
 Allow to edit column values.
 
 Default: `false`
+
+
+### max
+The latest date to accept. This value is passed as attribute to input. You can use this in date, datetime and numeric inputs.
+
+Default: `undefined`
+
+### min
+The earliest date to accept. This value is passed as attribute to input. You can use this in date, datetime and numeric inputs.
+
+Default: `undefined`
+
+### step
+The step attribute is a number that specifies the granularity that the value must adhere to. This value is passed as attribute to input. You can use this in date, datetime and numeric inputs.
+
+Default: `undefined`
+
+### maxlength
+The maxlength attribute specifies the maximum number of characters allowed in the <input> element. This value is passed as attribute to input. You can use this in text inputs.
+
+Default: `undefined`
 
 ## Events
 
