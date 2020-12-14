@@ -41,7 +41,7 @@ const numericFormatter = event => {
 const columnDefinition = [
   { sortable: true, filter: true, field: 'id', headerName: 'Id', editable: true },
   { sortable: true, filter: true, field: 'eyeColor', headerName: 'Eye color', editable: true },
-  { sortable: true, filter: true, field: 'name', headerName: 'Name', editable: true, maxlength: 5 },
+  { sortable: true, filter: true, field: 'name', headerName: 'Name', editable: true, maxlength: 5, className: 'my-custom-class' },
   { sortable: true, filter: true, field: 'gender', headerName: 'gender', editable: true },
   { sortable: true, filter: true, field: 'company', headerName: 'Company', editable: true },
   { sortable: true, filter: true, field: 'email', headerName: 'Email', editable: true },
@@ -129,5 +129,14 @@ export default {
 
 .ml-1 {
   margin-left: 10px;
+}
+
+.my-custom-class
+.header-content{
+  color: red;
+
+  &::before {
+    content: '*';
+  }
 }
 </style>
