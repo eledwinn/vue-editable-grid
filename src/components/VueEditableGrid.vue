@@ -23,7 +23,7 @@ div.vue-editable-grid
           th(
             v-for='(column, index) in columnDefs'
             :key='index'
-            :class='{ sortable: column.sortable, sorting: column.field === sortByColumn, descending: sortByDesc }'
+            :class='{ sortable: column.sortable, sorting: column.field === sortByColumn, descending: sortByDesc, [column.className || ""]: true }'
             @click='sort(column)'
           )
             span.header-content {{ column.headerName }}
