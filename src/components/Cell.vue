@@ -15,6 +15,10 @@ td.cell.noselect(
     input(
       :type='inputType'
       ref='input'
+      :min='column.min'
+      :max='column.max'
+      :step='column.step'
+      :maxlength='column.maxlength'
       @keyup.enter='setEditableValue'
       @keydown.tab='setEditableValue'
       @keyup.esc='editCancelled'
