@@ -12,7 +12,18 @@ td.cell.noselect(
   @mouseup='$emit("mouseup", $event)'
 )
   span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
+    select(v-if="(inputType === 'select')"
+      ref="input"
+      @keyup.enter="setEditableValue",
+      @keydown.tab="setEditableValue",
+      @change="setEditableValue",
+      @keyup.esc="editCancelled",
+      @focus="editPending = true"
+      @blur="leaved"
+      )
+        option(v-for="op in column.selectOptions" :value="op.value") {{op.text}}
     input(
+      v-else,
       :type='inputType'
       ref='input'
       :min='column.min'
@@ -85,6 +96,7 @@ export default {
         case 'percent': return 'number'
         case 'date': return 'date'
         case 'datetime': return 'datetime-local'
+        case 'select': return 'select'
       }
       return 'text'
     },
@@ -134,6 +146,7 @@ export default {
     },
     setEditableValue ($event) {
       const value = cellValueParser(this.column, this.row, this.$refs.input.value, true)
+      console.log('setEditableValue', value)
       this.editPending = false
       let valueChanged = true
       if (value === this.rowValue) valueChanged = false
@@ -240,6 +253,9 @@ export default {
         cursor: not-allowed;
       }
     }
+  }
+  select {
+    width: 100%;
   }
 }
 

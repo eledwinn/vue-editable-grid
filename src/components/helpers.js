@@ -42,7 +42,7 @@ export const cellValueParser = (column, row, value, fromInput) => {
   if (!value && value !== 0 && value !== false) {
     return value
   }
-  if (!column.type || column.type === 'text') {
+  if (!column.type || column.type === 'text' || column.type === 'select') {
     return value
   }
   if (column.type === 'date') {

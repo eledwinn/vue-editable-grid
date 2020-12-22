@@ -37,10 +37,15 @@ const numericFormatter = event => {
   }
   return `${event.value} years`
 }
-
+const selectOptions = [
+  { value: '', text: 'Select' },
+  { value: 'green', text: 'green' },
+  { value: 'blue', text: 'blue' },
+  { value: 'brown', text: 'brown' }
+]
 const columnDefinition = [
   { sortable: true, filter: true, field: 'id', headerName: 'Id', editable: true },
-  { sortable: true, filter: true, field: 'eyeColor', headerName: 'Eye color', editable: true },
+  { sortable: true, filter: true, field: 'eyeColor', headerName: 'Eye color', editable: true, type: 'select', selectOptions: selectOptions },
   { sortable: true, filter: true, field: 'name', headerName: 'Name', editable: true, maxlength: 5, className: 'my-custom-class' },
   { sortable: true, filter: true, field: 'gender', headerName: 'gender', editable: true },
   { sortable: true, filter: true, field: 'company', headerName: 'Company', editable: true },
