@@ -12,16 +12,17 @@ td.cell.noselect(
   @mouseup='$emit("mouseup", $event)'
 )
   span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
-    select(v-if="(inputType === 'select')"
-      ref="input"
-      @keyup.enter="setEditableValue",
-      @keydown.tab="setEditableValue",
-      @change="setEditableValue",
-      @keyup.esc="editCancelled",
-      @focus="editPending = true"
-      @blur="leaved"
+    select(v-if='(inputType === "select")'
+      class='grid-select'
+      ref='input'
+      @keyup.enter='setEditableValue',
+      @keydown.tab='setEditableValue',
+      @change='setEditableValue',
+      @keyup.esc='editCancelled',
+      @focus='editPending = true'
+      @blur='leaved'
       )
-        option(v-for="op in column.selectOptions" :value="op.value") {{op.text}}
+        option(v-for="(option, index) in column.selectOptions" :key='index' :value="option.value") {{option.text}}
     input(
       v-else,
       :type='inputType'
@@ -253,7 +254,7 @@ export default {
       }
     }
   }
-  select {
+  .grid-select {
     width: 100%;
   }
 }
