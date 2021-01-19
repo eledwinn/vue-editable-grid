@@ -9,6 +9,7 @@
       row-data-key='id'
       @cell-updated="cellUpdated"
       @row-selected="rowSelected"
+      @multiple-selected='multipleSelected'
       @link-clicked="linkClicked"
       @context-menu="contextMenu"
     >
@@ -98,6 +99,9 @@ export default {
     },
     rowSelected ($event) {
       this.selectedRow = $event.rowData
+    },
+    multipleSelected ($event) {
+      console.log('Multiple selected', $event)
     },
     linkClicked ($event) {
       console.log($event)

@@ -233,6 +233,18 @@ $event object: `{ rowData, colData, rowIndex, colIndex }`
 - rowIndex: The row index
 - colIndex: The column index
 
+### multiple-selected
+Emited when multiple rows or columns are selected or this selection changes.
+
+$event object: `{ rows, columns, rowIndexStart, colIndexStart, rowIndexEnd, colIndexEnd }`
+
+- rows: Rows array, referenced from array setted in `row-data` property.
+- columns: Columns array, referenced from array setted in `column-defs` property.
+- rowIndexStart: The row start index
+- colIndexStart: The column start index
+- rowIndexEnd: The row end index
+- colIndexEnd: The column end index
+
 ### link-clicked
 Emited when link cell is clicked.
 
