@@ -12,7 +12,19 @@ td.cell.noselect(
   @mouseup='$emit("mouseup", $event)'
 )
   span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
+    select(v-if='(inputType === "select")'
+      class='grid-select'
+      ref='input'
+      @keyup.enter='setEditableValue',
+      @keydown.tab='setEditableValue',
+      @change='setEditableValue',
+      @keyup.esc='editCancelled',
+      @focus='editPending = true'
+      @blur='leaved'
+      )
+        option(v-for="(option, index) in column.selectOptions" :key='index' :value="option.value") {{option.text}}
     input(
+      v-else,
       :type='inputType'
       ref='input'
       :min='column.min'
@@ -85,6 +97,7 @@ export default {
         case 'percent': return 'number'
         case 'date': return 'date'
         case 'datetime': return 'datetime-local'
+        case 'select': return 'select'
       }
       return 'text'
     },
@@ -240,6 +253,9 @@ export default {
         cursor: not-allowed;
       }
     }
+  }
+  .grid-select {
+    width: 100%;
   }
 }
 

@@ -153,7 +153,7 @@ Key name for column in `row-data` items
 Name for column header
 
 ### type
-Data type, possible vales: `datetime`, `date`, `text`, `numeric`, `currency`, `boolean`, `percent`.
+Data type, possible vales: `datetime`, `date`, `text`, `numeric`, `currency`, `boolean`, `percent`, `select`
 
 Default: `text`
 
@@ -161,6 +161,22 @@ Default: `text`
 Data column format, only apply for `date` and `datetime` column types.
 
 Refer to [date-fns format table](https://date-fns.org/v2.14.0/docs/format) for more details.
+
+### selectOptions
+Data column selectOptions, only apply for `select` column type.
+
+Data column selectOptions, will accepts an array of objects with `value` and `text` keys
+```js
+const selectOptions = [
+  { value: '', text: 'Select' },
+  { value: 'green', text: 'green' },
+  { value: 'blue', text: 'blue' },
+  { value: 'brown', text: 'brown' }
+]
+const columnDefs = [
+  { sortable: true, filter: true, field: 'eyeColor', headerName: 'Eye color', editable: true, type: 'select', selectOptions: selectOptions },
+]
+```
 
 ### formatter
 Function that allow format the display value.
