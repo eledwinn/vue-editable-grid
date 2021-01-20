@@ -217,7 +217,7 @@ export default {
         this.emitRowSelected()
       }
     },
-    selEnd () {
+    selEnd (value, old) {
       this.emitRowSelected()
     },
     rowDataPage () {
@@ -254,11 +254,17 @@ export default {
   },
   methods: {
     emitRowSelected () {
-      if ((this.selStart[0] === this.selEnd[0] && this.selStart[1] === this.selEnd[1])) {
+      const [rowIndexStart, colIndexStart] = this.selStart
+      const [rowIndexEnd, colIndexEnd] = this.selEnd
+      if (rowIndexStart === rowIndexEnd && colIndexStart === colIndexEnd) {
         const cell = this.getCell()
         this.$emit('row-selected', cell)
+        this.$emit('multiple-selection', {})
       } else {
-        this.$emit('row-selected', { rowData: null })
+        const rows = this.rowDataFiltered.slice(rowIndexStart, rowIndexEnd + 1)
+        const columns = this.columnDefs.slice(colIndexStart, colIndexEnd + 1)
+        this.$emit('row-selected', { rowData: null, colData: null })
+        this.$emit('multiple-selected', { rows, columns, rowIndexStart, colIndexStart, rowIndexEnd, colIndexEnd })
       }
     },
     renderVisibleScroll (body) {
