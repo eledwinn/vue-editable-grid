@@ -38,20 +38,17 @@ td.cell.noselect(
       @blur='leaved'
     )
   span.cell-content(v-else)
-    a(@click.prevent='linkClicked' v-if='column.type === "link"' href='#') {{ row[column.field] | cellFormatter(column, row) }}
-    span(v-else) {{ row[column.field] | cellFormatter(column, row) }}
+    a(@click.prevent='linkClicked' v-if='column.type === "link"' href='#') {{ formatCell(column, row) }}
+    span(v-else) {{ formatCell(column, row) }}
 </template>
 
 <script>
-import Vue from 'vue'
+import { nextTick } from 'vue'
 import { format } from 'date-fns'
 import { cellValueParser, sameDates } from './helpers'
 import { cellFormatter } from './vue-filters.js'
 
 export default {
-  filters: {
-    cellFormatter
-  },
   props: {
     column: { type: Object },
     row: { type: Object },
@@ -112,7 +109,7 @@ export default {
         this.rowValue = this.getEditableValue(this.row[this.column.field])
         this.value = this.getEditableValue(this.cellEditing[2] || this.row[this.column.field])
 
-        Vue.nextTick(() => {
+        nextTick(() => {
           const input = this.$refs.input
           if (!this.value && this.value !== 0 && this.value !== false) {
             input.value = null
@@ -136,6 +133,9 @@ export default {
     }
   },
   methods: {
+    formatCell (column, row) {
+      return cellFormatter(row[column.field], column, row)
+    },
     getEditableValue (value) {
       if (this.column.type === 'datetime' || this.column.type === 'date') {
         if (typeof value === 'string') {
