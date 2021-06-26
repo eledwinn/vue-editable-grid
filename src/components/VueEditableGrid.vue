@@ -217,7 +217,7 @@ export default {
         this.emitRowSelected()
       }
     },
-    selEnd (value, old) {
+    selEnd () {
       this.emitRowSelected()
     },
     rowDataPage () {
@@ -363,7 +363,7 @@ export default {
         this.cellEditing = [rowIndex, columnIndex, newValue]
       }
     },
-    linkClicked (rowData, colData, rowIndex, colIndex, newValue) {
+    linkClicked (rowData, colData, rowIndex, colIndex) {
       this.$emit('link-clicked', { rowData, colData, rowIndex, colIndex })
     },
     contextMenu (row, column, rowIndex, columnIndex, $event) {
@@ -498,7 +498,7 @@ export default {
         }, {})
       })
     },
-    startSelection (rowIndex, colIndex, e) {
+    startSelection (rowIndex, colIndex) {
       this.isSelecting = true
       this.selStartSelection = [rowIndex, colIndex]
     },

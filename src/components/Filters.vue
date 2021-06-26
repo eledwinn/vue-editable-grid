@@ -1,7 +1,7 @@
 <template lang="pug">
-  .grid-filters
-    button.filter.remove(@click='remove()' v-if='filtersLength') x
-    button.filter(v-for='field in fieldsWithData' :key='field' @click='remove(field)') {{ colNames[field] }}: {{ filters[field] }}
+.grid-filters
+  button.filter.remove(@click='remove()' v-if='filtersLength') x
+  button.filter(v-for='field in fieldsWithData' :key='field' @click='remove(field)') {{ colNames[field] }}: {{ filters[field] }}
 </template>
 
 <script>
