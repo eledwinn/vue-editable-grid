@@ -10,6 +10,8 @@ td.cell.noselect(
   @mousedown='$emit("mousedown", $event)'
   @mouseover='$emit("mouseover", $event)'
   @mouseup='$emit("mouseup", $event)'
+  @keyup='$emit("keyup", { rowIndex, columnIndex, $event, input: $refs.input })'
+  @keydown='$emit("keydown", { rowIndex, columnIndex, $event, input: $refs.input })'
 )
   span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
     select(v-if='(inputType === "select")'

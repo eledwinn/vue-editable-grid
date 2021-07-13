@@ -60,6 +60,8 @@ div.vue-editable-grid
               @mousedown='startSelection(offsetRows + rowIndex, columnIndex, $event)'
               @mouseover='onSelection(offsetRows + rowIndex, columnIndex)'
               @mouseup='stopSelection'
+              @keyup='(evt)=> onKeyUp({ evt, row})'
+              @keydown='(evt)=> onKeyDown({ evt, row})'
             )
     textarea.hidde(ref='tmp')
 </template>
@@ -253,6 +255,12 @@ export default {
     }
   },
   methods: {
+    onKeyDown ({ evt, row }) {
+      this.$emit('keydown', { evt, row })
+    },
+    onKeyUp ({ evt, row }) {
+      this.$emit('keyup', { evt, row })
+    },
     emitRowSelected () {
       const [rowIndexStart, colIndexStart] = this.selStart
       const [rowIndexEnd, colIndexEnd] = this.selEnd
