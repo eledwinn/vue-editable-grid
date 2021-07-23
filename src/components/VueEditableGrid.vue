@@ -94,7 +94,8 @@ export default {
     pageCount: { type: Number, default: 0 },
     itemHeight: { type: Number, default: 30 },
     virtualScrollOffset: { type: Number, default: 3 },
-    onlyBorder: { type: Boolean, default: true }
+    onlyBorder: { type: Boolean, default: true },
+    tab2Column: { type: Boolean, default: true }
   },
   data () {
     return {
@@ -158,10 +159,16 @@ export default {
         this.$refs.tmp.focus()
         setTimeout(() => {
           const pasted = this.$refs.tmp.value
-          const arrayPasted = pasted.split('\n').filter((row, index, array) => {
+          let arrayPasted = pasted.split('\n').filter((row, index, array) => {
             const isLastRow = index === array.length - 1
             return !(isLastRow && row === '')
-          }).map(row => row.split('\t'))
+          })
+          // .map(row => row.split('\t'))
+          if (this.tab2Column && this.tab2Column === true) {
+            arrayPasted = arrayPasted.map(row => row.split('\t'))
+          } else {
+            arrayPasted = arrayPasted.map(row => [row.replace('\t', ' ')])
+          }
           const [sRowIndex, sColIndex] = this.selStart
           const [eRowIndex, eColIndex] = this.selEnd
           // paste all
