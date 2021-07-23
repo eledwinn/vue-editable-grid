@@ -199,6 +199,8 @@ export default {
       } else if (isControl && (key.toLowerCase() === 'c' || key.toLowerCase() === 'x')) {
         if (isShift) $event.preventDefault()
         this.copyToClipboard(isShift)
+      } else if (isControl && (key.toLowerCase() === 'z' || key.toLowerCase() === 'a' || key.toLowerCase() === 's')) {
+        $event.preventDefault()
       } else if (!$event.metaKey && this.selStart[0] >= 0 && isWriteableKey($event.keyCode)) {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
         $event.preventDefault()
