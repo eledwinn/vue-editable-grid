@@ -95,7 +95,10 @@ export default {
     itemHeight: { type: Number, default: 30 },
     virtualScrollOffset: { type: Number, default: 3 },
     onlyBorder: { type: Boolean, default: true },
-    tab2Column: { type: Boolean, default: true }
+    tab2Column: { type: Boolean, default: true },
+    breakLine: { type: Boolean, default: true },
+    breakLineWordLimit: { type: Number, default: 12 },
+    breakLineEllipsis: { type: String, default: '' }
   },
   data () {
     return {
@@ -158,12 +161,21 @@ export default {
         this.$refs.tmp.value = ''
         this.$refs.tmp.focus()
         setTimeout(() => {
-          const pasted = this.$refs.tmp.value
-          let arrayPasted = pasted.split('\n').filter((row, index, array) => {
+          let pasted = this.$refs.tmp.value
+          if (this.breakLine && this.breakLine === true) {
+            pasted = pasted.split('\n')
+            pasted = pasted.map(el => {
+              const chunks = this.getPhrases(el, this.breakLineWordLimit)
+              el = chunks.join(this.breakLineEllipsis + '\n' + this.breakLineEllipsis)
+              return el
+            })
+            pasted = pasted.join('\n')
+          }
+          let arrayPasted = pasted.split('\n')
+          arrayPasted = arrayPasted.filter((row, index, array) => {
             const isLastRow = index === array.length - 1
             return !(isLastRow && row === '')
           })
-          // .map(row => row.split('\t'))
           if (this.tab2Column && this.tab2Column === true) {
             arrayPasted = arrayPasted.map(row => row.split('\t'))
           } else {
@@ -264,6 +276,22 @@ export default {
     }
   },
   methods: {
+    getPhrases (text, wordsPerPhrase) {
+      var words = text.split(/\s+/)
+      var result = []
+      for (var i = 0; i < words.length; i += wordsPerPhrase) {
+        result.push(words.slice(i, i + wordsPerPhrase).join(' '))
+      }
+      return result
+    },
+    chunkSubstr (str, size) {
+      const numChunks = Math.ceil(str.length / size)
+      const chunks = new Array(numChunks)
+      for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+        chunks[i] = str.substr(o, size)
+      }
+      return chunks
+    },
     onKeyDown ({ evt, row }) {
       this.$emit('keydown', { evt, row })
     },

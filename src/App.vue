@@ -100,7 +100,7 @@ export default {
       }
     },
     cellUpdated ($event) {
-      console.log($event)
+      // console.log($event)
     },
     rowSelected ($event) {
       this.selectedRow = $event.rowData
