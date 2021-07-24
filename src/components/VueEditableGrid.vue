@@ -96,7 +96,7 @@ export default {
     virtualScrollOffset: { type: Number, default: 3 },
     onlyBorder: { type: Boolean, default: true },
     tab2Column: { type: Boolean, default: true },
-    breakLine: { type: Boolean, default: true },
+    breakLine: { type: Boolean, default: false },
     breakLineWordLimit: { type: Number, default: 12 },
     breakLineEllipsis: { type: String, default: '' }
   },
