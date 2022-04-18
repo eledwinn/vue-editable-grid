@@ -56,7 +56,7 @@ div.vue-editable-grid
               @edited='cellEdited'
               @edit-cancelled='cellEditing = []'
               @link-clicked='linkClicked(row, column, offsetRows + rowIndex, columnIndex)'
-              @contextmenu='contextMenu(row, column, rowIndex, columnIndex, $event)'
+              @contextmenu='contextMenu(row, column, offsetRows + rowIndex, columnIndex, $event)'
               @mousedown='startSelection(offsetRows + rowIndex, columnIndex, $event)'
               @mouseover='onSelection(offsetRows + rowIndex, columnIndex)'
               @mouseup='stopSelection'
@@ -98,7 +98,8 @@ export default {
     tab2Column: { type: Boolean, default: true },
     breakLine: { type: Boolean, default: false },
     breakLineWordLimit: { type: Number, default: 12 },
-    breakLineEllipsis: { type: String, default: '' }
+    breakLineEllipsis: { type: String, default: '' },
+    userReservedKeys: { type: Array, default: () => { return ['d', 'f'] } }
   },
   data () {
     return {
@@ -129,6 +130,7 @@ export default {
       const key = $event.key
       const isControl = $event.metaKey || $event.ctrlKey
       const isShift = $event.shiftKey
+      const isAlt = $event.altKey
       if (key === 'ArrowDown') {
         if (isControl) this.selectLastRow()
         else this.sumSelectionRow(1)
@@ -211,7 +213,11 @@ export default {
       } else if (isControl && (key.toLowerCase() === 'c' || key.toLowerCase() === 'x')) {
         if (isShift) $event.preventDefault()
         this.copyToClipboard(isShift)
-      } else if (isControl && (['a', 's', 'z', 'y', 'f', 'h'].includes(key.toLowerCase()))) {
+      } else if (isAlt && (this.reservedKeys.includes(key.toLowerCase()))) {
+        $event.preventDefault()
+      } else if (isControl && isAlt && (this.reservedKeys.includes(key.toLowerCase()))) {
+        $event.preventDefault()
+      } else if (isControl && (this.reservedKeys.includes(key.toLowerCase()))) {
         $event.preventDefault()
       } else if (!$event.metaKey && this.selStart[0] >= 0 && isWriteableKey($event.keyCode)) {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
@@ -259,6 +265,12 @@ export default {
     }
   },
   computed: {
+    reservedKeys () {
+      let rkeys = ['a', 's', 'z', 'y', 'f', 'h']
+      rkeys = rkeys.filter(el => !this.userReservedKeys.includes(el))
+      rkeys.push(...this.userReservedKeys)
+      return rkeys
+    },
     rowDataFiltered () {
       return filterAndSort(this.filter, this.rowData, this.columnDefs, this.sortByColumn, this.sortByDesc)
     },
