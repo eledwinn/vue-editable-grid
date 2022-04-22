@@ -442,6 +442,7 @@ export default {
     },
     setEditableValue (row, column, rowIndex, columnIndex, value, valueChanged, $event) {
       return new Promise(resolve => {
+        const oldValue = row[column.field] ? row[column.field] : null
         if (!valueChanged) {
           this.cellEditing = []
           resolve()
@@ -482,7 +483,7 @@ export default {
           this.setCellError(rowIndex, columnIndex, false)
         }
 
-        this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess })
+        this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess, oldValue })
         if (prevent) {
           this.cellEditing = []
           resolve()
