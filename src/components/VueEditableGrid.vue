@@ -56,10 +56,12 @@ div.vue-editable-grid
               @edited='cellEdited'
               @edit-cancelled='cellEditing = []'
               @link-clicked='linkClicked(row, column, offsetRows + rowIndex, columnIndex)'
-              @contextmenu='contextMenu(row, column, rowIndex, columnIndex, $event)'
+              @contextmenu='contextMenu(row, column, offsetRows + rowIndex, columnIndex, $event)'
               @mousedown='startSelection(offsetRows + rowIndex, columnIndex, $event)'
               @mouseover='onSelection(offsetRows + rowIndex, columnIndex)'
               @mouseup='stopSelection'
+              @keyup='(evt)=> onKeyUp({ evt, row})'
+              @keydown='(evt)=> onKeyDown({ evt, row})'
             )
     textarea.hidde(ref='tmp')
 </template>
@@ -92,7 +94,12 @@ export default {
     pageCount: { type: Number, default: 0 },
     itemHeight: { type: Number, default: 30 },
     virtualScrollOffset: { type: Number, default: 3 },
-    onlyBorder: { type: Boolean, default: true }
+    onlyBorder: { type: Boolean, default: true },
+    tab2Column: { type: Boolean, default: true },
+    breakLine: { type: Boolean, default: false },
+    breakLineWordLimit: { type: Number, default: 12 },
+    breakLineEllipsis: { type: String, default: '' },
+    userReservedKeys: { type: Array, default: () => { return ['d', 'f'] } }
   },
   data () {
     return {
@@ -123,6 +130,7 @@ export default {
       const key = $event.key
       const isControl = $event.metaKey || $event.ctrlKey
       const isShift = $event.shiftKey
+      const isAlt = $event.altKey
       if (key === 'ArrowDown') {
         if (isControl) this.selectLastRow()
         else this.sumSelectionRow(1)
@@ -155,11 +163,26 @@ export default {
         this.$refs.tmp.value = ''
         this.$refs.tmp.focus()
         setTimeout(() => {
-          const pasted = this.$refs.tmp.value
-          const arrayPasted = pasted.split('\n').filter((row, index, array) => {
+          let pasted = this.$refs.tmp.value
+          if (this.breakLine && this.breakLine === true) {
+            pasted = pasted.split('\n')
+            pasted = pasted.map(el => {
+              const chunks = this.getPhrases(el, this.breakLineWordLimit)
+              el = chunks.join(this.breakLineEllipsis + '\n' + this.breakLineEllipsis)
+              return el
+            })
+            pasted = pasted.join('\n')
+          }
+          let arrayPasted = pasted.split('\n')
+          arrayPasted = arrayPasted.filter((row, index, array) => {
             const isLastRow = index === array.length - 1
             return !(isLastRow && row === '')
-          }).map(row => row.split('\t'))
+          })
+          if (this.tab2Column && this.tab2Column === true) {
+            arrayPasted = arrayPasted.map(row => row.split('\t'))
+          } else {
+            arrayPasted = arrayPasted.map(row => [row.replace('\t', ' ')])
+          }
           const [sRowIndex, sColIndex] = this.selStart
           const [eRowIndex, eColIndex] = this.selEnd
           // paste all
@@ -190,6 +213,12 @@ export default {
       } else if (isControl && (key.toLowerCase() === 'c' || key.toLowerCase() === 'x')) {
         if (isShift) $event.preventDefault()
         this.copyToClipboard(isShift)
+      } else if (isAlt && (this.reservedKeys.includes(key.toLowerCase()))) {
+        $event.preventDefault()
+      } else if (isControl && isAlt && (this.reservedKeys.includes(key.toLowerCase()))) {
+        $event.preventDefault()
+      } else if (isControl && (this.reservedKeys.includes(key.toLowerCase()))) {
+        $event.preventDefault()
       } else if (!$event.metaKey && this.selStart[0] >= 0 && isWriteableKey($event.keyCode)) {
         const { colData, rowData, rowIndex, colIndex } = this.getCell()
         $event.preventDefault()
@@ -236,6 +265,12 @@ export default {
     }
   },
   computed: {
+    reservedKeys () {
+      let rkeys = ['a', 's', 'z', 'y', 'f', 'h']
+      rkeys = rkeys.filter(el => !this.userReservedKeys.includes(el))
+      rkeys.push(...this.userReservedKeys)
+      return rkeys
+    },
     rowDataFiltered () {
       return filterAndSort(this.filter, this.rowData, this.columnDefs, this.sortByColumn, this.sortByDesc)
     },
@@ -253,6 +288,28 @@ export default {
     }
   },
   methods: {
+    getPhrases (text, wordsPerPhrase) {
+      var words = text.split(/\s+/)
+      var result = []
+      for (var i = 0; i < words.length; i += wordsPerPhrase) {
+        result.push(words.slice(i, i + wordsPerPhrase).join(' '))
+      }
+      return result
+    },
+    chunkSubstr (str, size) {
+      const numChunks = Math.ceil(str.length / size)
+      const chunks = new Array(numChunks)
+      for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+        chunks[i] = str.substr(o, size)
+      }
+      return chunks
+    },
+    onKeyDown ({ evt, row }) {
+      this.$emit('keydown', { evt, row })
+    },
+    onKeyUp ({ evt, row }) {
+      this.$emit('keyup', { evt, row })
+    },
     emitRowSelected () {
       const [rowIndexStart, colIndexStart] = this.selStart
       const [rowIndexEnd, colIndexEnd] = this.selEnd
@@ -385,6 +442,7 @@ export default {
     },
     setEditableValue (row, column, rowIndex, columnIndex, value, valueChanged, $event) {
       return new Promise(resolve => {
+        const oldValue = row[column.field] ? row[column.field] : null
         if (!valueChanged) {
           this.cellEditing = []
           resolve()
@@ -425,7 +483,7 @@ export default {
           this.setCellError(rowIndex, columnIndex, false)
         }
 
-        this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess })
+        this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess, oldValue })
         if (prevent) {
           this.cellEditing = []
           resolve()

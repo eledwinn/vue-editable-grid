@@ -6,6 +6,7 @@
       id="mygrid"
       :column-defs="columnDefs"
       :row-data="rows"
+      :userReservedKeys="['d', 'f', 'k', 'r']"
       row-data-key='id'
       @cell-updated="cellUpdated"
       @row-selected="rowSelected"
