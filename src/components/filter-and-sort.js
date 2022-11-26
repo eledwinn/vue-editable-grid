@@ -4,9 +4,13 @@ const rawComparerColumns = ['datetime', 'date', 'boolean']
 
 const applyFilter = (rowValue, filterValue) => {
   const [, negativeVal] = filterValue.split('!')
+  const [, equalVal] = filterValue.split('=')
+  if (equalVal) {
+    return rowValue === equalVal
+  }
   return negativeVal
-    ? (negativeVal && rowValue.indexOf(negativeVal.trim().toLowerCase()) < 0)
-    : filterValue && rowValue.indexOf(filterValue.trim().toLowerCase()) >= 0
+    ? (negativeVal && rowValue.indexOf(negativeVal) < 0)
+    : filterValue && rowValue.indexOf(filterValue) >= 0
 }
 
 export default (filter, data, columnDefs, sortBy, sortDesc) => {
@@ -25,10 +29,10 @@ export default (filter, data, columnDefs, sortBy, sortDesc) => {
       const rowValue = rawComparerColumns.indexOf(column.type) >= 0 ? `${cellFormatter(row[filterKey], column)}`.toLowerCase() : `${row[filterKey]}`.toLowerCase()
       if (filterQuery.indexOf('&') >= 0) {
         const filterValues = filterQuery.split('&')
-        return filterValues.filter(filterValue => applyFilter(rowValue, filterValue)).length === filterValues.length
+        return filterValues.filter(filterValue => applyFilter(rowValue, filterValue.trim().toLowerCase())).length === filterValues.length
       } else {
         const filterValues = filterQuery.split(',')
-        return filterValues.some(filterValue => applyFilter(rowValue, filterValue))
+        return filterValues.some(filterValue => applyFilter(rowValue, filterValue.trim().toLowerCase()))
       }
     }).length === filterKeys.length
   })

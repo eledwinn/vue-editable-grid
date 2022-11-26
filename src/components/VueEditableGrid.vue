@@ -233,6 +233,9 @@ export default {
     },
     columnDefs () {
       this.loadColumnsSizes()
+    },
+    rowDataFiltered (value) {
+      this.$emit('filtered-data-changed', value)
     }
   },
   computed: {

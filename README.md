@@ -128,23 +128,7 @@ If column can be filtered
 
 Default: `false`
 
-**filter usage**
-
-  - *Normal filter* : Type the value to filter
-
-  ![normal-filter](./images/normal-filter.png)
-
-  - *Negative filter* : use ! to filter the data that does not match
-
-  ![negative-filter](./images/negative-filter.png)
-
-  - *Or filter* : Filter data that match with some of the values 
-
-  ![or-filter](./images/or-filter.png)
-
-  - *And filter* : Filter data that match with all values
-
-  ![and-filter](./images/or-filter.png)
+> More details in [How to use filters](#how-to-use-filters) section.
 
 ### field
 Key name for column in `row-data` items
@@ -271,9 +255,22 @@ $event object: `{ rowData, colData, rowIndex, colIndex }`
 - rowIndex: The row index
 - colIndex: The column index
 
+### filtered-data-changed
+Emitted when the user change filters or short the grid.
+
+$event object: `Array with the original data filtered`
+
+Olso you can get the data filtered using the `rowDataFiltered` computed property.
+
+```js
+  yourMethod () {
+    const filteredData = this.$refs.grid.rowDataFiltered
+    console.log(filteredData)
+  },
+```
 
 ### contextmenu
-Emmited when contextmenu is open
+Emitted when contextmenu is open
 
 $event object: `{ rowData, colData, rowIndex, colIndex }`
 
@@ -335,6 +332,18 @@ $cellStyle = {
   field2: { color: 'rgb(0, 0, 0)' }
 }
 ```
+
+## How to use filters
+
+  - *Normal filter*: `brown` filters all rows that contains that word.
+  - *Equal filter* : `=brown` filter all rows that exact match with the brown word.
+  - *Negative filter*: use `!` to filter the data that does not match, `!brown` filters all rows that no contains that word.
+  - *Or filter*: `brown,green` Filter data that match with some of the values (brown or green).
+  - *And filter* : `brown&green` Filter data that match with all values (brown AND green).
+
+>  NOTE:  You can combine `or` and `and` with negative (`!`) and exact (`=`) filters:  
+Exaples: `=brown&=green`, `=brown,!green`
+
 
 ## How to colaborate
 ```

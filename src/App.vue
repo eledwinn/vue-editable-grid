@@ -12,9 +12,10 @@
       @multiple-selected='multipleSelected'
       @link-clicked="linkClicked"
       @context-menu="contextMenu"
+      @filtered-data-changed="filteredDataChanged"
     >
       <template v-slot:header>
-        Vue editable grid, by eledwinn
+        Vue editable grid, by eledwinn. {{ filteredRows ? filteredRows.length : rows.length }} rows.
         <a href="#" @click.prevent="removeCurrentRow" v-if="selectedRow" class="ml-1">Remove current row</a>
       </template>
       <template v-slot:header-r>
@@ -71,7 +72,8 @@ export default {
     return {
       columnDefs: columnDefinition,
       rows: [],
-      selectedRow: null
+      selectedRow: null,
+      filteredRows: null
     }
   },
   created () {
@@ -116,6 +118,10 @@ export default {
     },
     contextMenu ($event) {
       console.log($event)
+    },
+    filteredDataChanged (filteredRows) {
+      console.log(this.$refs.grid.rowDataFiltered)
+      this.filteredRows = filteredRows
     }
   }
 }
